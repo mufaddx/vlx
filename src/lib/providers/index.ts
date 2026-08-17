@@ -1,5 +1,4 @@
 import { MockOtpProvider } from "./otp";
-import { SmtpOtpProvider, smtpConfigured } from "./smtp-otp";
 import { LocalStorageProvider } from "./storage";
 import {
   MockNotificationProvider,
@@ -10,7 +9,7 @@ import {
 import { LiveKitVideoProvider, livekitConfigured } from "./livekit";
 
 export const providers = {
-  otp: smtpConfigured() ? new SmtpOtpProvider() : new MockOtpProvider(),
+  otp: new MockOtpProvider(),
   payment: new MockPaymentProvider(),
   video:
     process.env.VIDEO_PROVIDER === "livekit" || livekitConfigured()

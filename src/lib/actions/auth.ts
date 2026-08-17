@@ -12,62 +12,80 @@ import { headers } from "next/headers";
 const identifierSchema = z.string().trim().toLowerCase().email("Enter a valid email address");
 
 export async function sendOtpAction(formData: FormData) {
-  const parsedId = identifierSchema.safeParse(String(formData.get("identifier") ?? ""));
-  if (!parsedId.success) {
-    return { error: parsedId.error.issues[0]?.message ?? "Enter a valid email address" };
-  }
-  const identifier = parsedId.data;
-  const purpose = z.enum(["login", "signup"]).parse(String(formData.get("purpose") ?? "login"));
-  const hdrs = await headers();
-  const ip = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const limited = rateLimit(`otp:${identifier}:${ip}`, 5, 10 * 60 * 1000);
-  if (!limited.ok) {
-    return { error: "Too many OTP requests. Try again later." };
-  }
-
-  const existing = await prisma.user.findFirst({
-    where: { email: identifier },
-  });
-  if (purpose === "login" && !existing) {
-    return { error: "No account found. Create one instead." };
-  }
-  if (purpose === "signup" && existing) {
-    return { error: "An account already exists. Log in instead." };
-  }
-
-  const code = generateOtp();
-  await prisma.otpVerification.create({
-    data: {
-      identifier,
-      channel: "email",
-      codeHash: hashValue(code),
-      purpose,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-      ipAddress: ip,
-    },
-  });
   try {
-    await providers.otp.send({
-      to: identifier,
-      channel: "email",
-      code,
-      purpose,
+    const parsedId = identifierSchema.safeParse(String(formData.get("identifier") ?? ""));
+    if (!parsedId.success) {
+      return { error: parsedId.error.issues[0]?.message ?? "Enter a valid email address" };
+    }
+    const identifier = parsedId.data;
+    const purposeParsed = z.enum(["login", "signup"]).safeParse(String(formData.get("purpose") ?? "login"));
+    if (!purposeParsed.success) return { error: "Invalid request." };
+    const purpose = purposeParsed.data;
+    const hdrs = await headers();
+    const ip = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const limited = rateLimit(`otp:${identifier}:${ip}`, 5, 10 * 60 * 1000);
+    if (!limited.ok) {
+      return { error: "Too many OTP requests. Try again later." };
+    }
+
+    const existing = await prisma.user.findFirst({
+      where: { email: identifier },
     });
-  } catch {
+    if (purpose === "login" && !existing) {
+      return { error: "No account found. Create one instead." };
+    }
+    if (purpose === "signup" && existing) {
+      return { error: "An account already exists. Log in instead." };
+    }
+
+    const code = generateOtp();
+    await prisma.otpVerification.create({
+      data: {
+        identifier,
+        channel: "email",
+        codeHash: hashValue(code),
+        purpose,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        ipAddress: ip,
+      },
+    });
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const { SmtpOtpProvider } = await import("@/lib/providers/smtp-otp");
+      await new SmtpOtpProvider().send({
+        to: identifier,
+        channel: "email",
+        code,
+        purpose,
+      });
+    } else {
+      await providers.otp.send({
+        to: identifier,
+        channel: "email",
+        code,
+        purpose,
+      });
+    }
+    const show = process.env.NEXT_PUBLIC_SHOW_DEV_OTP === "true" && process.env.NODE_ENV !== "production";
+    return { ok: true as const, hint: show ? code : undefined };
+  } catch (err) {
+    console.error("sendOtpAction", err);
     return { error: "Could not send the email code. Try again in a minute." };
   }
-  const show = process.env.NEXT_PUBLIC_SHOW_DEV_OTP === "true" && process.env.NODE_ENV !== "production";
-  return { ok: true as const, hint: show ? code : undefined };
 }
 
 export async function verifyOtpAction(formData: FormData) {
+  try {
   const parsedId = identifierSchema.safeParse(String(formData.get("identifier") ?? ""));
   if (!parsedId.success) {
     return { error: parsedId.error.issues[0]?.message ?? "Enter a valid email address" };
   }
   const identifier = parsedId.data;
-  const purpose = z.enum(["login", "signup"]).parse(String(formData.get("purpose") ?? "login"));
-  const code = z.string().trim().min(4).max(8).parse(String(formData.get("code") ?? ""));
+  const purposeParsed = z.enum(["login", "signup"]).safeParse(String(formData.get("purpose") ?? "login"));
+  if (!purposeParsed.success) return { error: "Invalid request." };
+  const purpose = purposeParsed.data;
+  const codeParsed = z.string().trim().min(4).max(8).safeParse(String(formData.get("code") ?? ""));
+  if (!codeParsed.success) return { error: "Enter the code from your email." };
+  const code = codeParsed.data;
 
   const otp = await prisma.otpVerification.findFirst({
     where: {
@@ -110,6 +128,12 @@ export async function verifyOtpAction(formData: FormData) {
   }
 
   return { ok: true as const, verified: true };
+  } catch (err) {
+    const digest = typeof err === "object" && err && "digest" in err ? String((err as { digest?: unknown }).digest) : "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("verifyOtpAction", err);
+    return { error: "Could not verify the code. Try again." };
+  }
 }
 
 const setupSchema = z.object({

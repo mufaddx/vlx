@@ -36,11 +36,16 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
           action={(fd) => {
             setError(null);
             start(async () => {
-              const res = await sendOtpAction(fd);
-              if ("error" in res && res.error) setError(res.error);
-              else {
-                setHint(res.hint);
+              try {
+                const res = await sendOtpAction(fd);
+                if (!res || ("error" in res && res.error)) {
+                  setError(res && "error" in res ? res.error : "Could not send the code.");
+                  return;
+                }
+                setHint("hint" in res ? res.hint : undefined);
                 setStep("otp");
+              } catch {
+                setError("Could not send the code. Try again.");
               }
             });
           }}
@@ -72,9 +77,13 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
           action={(fd) => {
             setError(null);
             start(async () => {
-              const res = await verifyOtpAction(fd);
-              if (res && "error" in res && res.error) setError(res.error);
-              else if (mode === "signup") setStep("profile");
+              try {
+                const res = await verifyOtpAction(fd);
+                if (res && "error" in res && res.error) setError(res.error);
+                else if (mode === "signup") setStep("profile");
+              } catch {
+                setError("Could not verify the code. Try again.");
+              }
             });
           }}
         >
