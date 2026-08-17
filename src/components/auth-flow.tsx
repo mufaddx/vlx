@@ -2,20 +2,35 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { completeSignupAction, sendOtpAction, verifyOtpAction } from "@/lib/actions/auth";
 
 type JsonResult = { error?: string; hint?: string; next?: string; ok?: boolean; verified?: boolean };
 
-async function postForm(url: string, fd: FormData): Promise<JsonResult> {
-  const res = await fetch(url, { method: "POST", body: fd, credentials: "same-origin" });
-  const data = (await res.json().catch(() => null)) as JsonResult | null;
-  if (!data) {
-    return {
-      error:
-        res.status === 404
-          ? "OTP service is missing on the server. Wait for the latest deploy, then try again."
-          : "Could not reach the server. Try again.",
-    };
+async function sendCode(fd: FormData): Promise<JsonResult> {
+  try {
+    const res = await sendOtpAction(fd);
+    if (res) return res;
+  } catch {
+    /* Hostinger may block some action POSTs — fall through to API */
   }
+  const res = await fetch("/api/auth/send-otp", { method: "POST", body: fd, credentials: "same-origin" });
+  const data = (await res.json().catch(() => null)) as JsonResult | null;
+  if (!data) return { error: "Could not reach the server. Try again." };
+  return data;
+}
+
+async function verifyCode(fd: FormData): Promise<JsonResult> {
+  try {
+    const res = await verifyOtpAction(fd);
+    if (res) return res;
+  } catch (err) {
+    const digest =
+      typeof err === "object" && err && "digest" in err ? String((err as { digest?: unknown }).digest) : "";
+    if (digest.includes("NEXT_REDIRECT")) throw err;
+  }
+  const res = await fetch("/api/auth/verify-otp", { method: "POST", body: fd, credentials: "same-origin" });
+  const data = (await res.json().catch(() => null)) as JsonResult | null;
+  if (!data) return { error: "Could not verify the code. Try again." };
   return data;
 }
 
@@ -51,7 +66,7 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
             setError(null);
             setPending(true);
             try {
-              const res = await postForm("/api/auth/send-otp", new FormData(e.currentTarget));
+                const res = await sendCode(new FormData(e.currentTarget));
               if (res.error) {
                 setError(res.error);
                 return;
@@ -59,7 +74,7 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
               setHint(res.hint);
               setStep("otp");
             } catch {
-              setError("Could not send the code. Try again.");
+              setError("Could not send the code. If this keeps happening, SMTP is not reaching the mailbox.");
             } finally {
               setPending(false);
             }
@@ -94,7 +109,7 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
             setError(null);
             setPending(true);
             try {
-              const res = await postForm("/api/auth/verify-otp", new FormData(e.currentTarget));
+                const res = await verifyCode(new FormData(e.currentTarget));
               if (res.error) {
                 setError(res.error);
                 return;
@@ -132,12 +147,11 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
             setError(null);
             setPending(true);
             try {
-              const res = await postForm("/api/auth/complete-signup", new FormData(e.currentTarget));
-              if (res.error) {
+              const res = await completeSignupAction(new FormData(e.currentTarget));
+              if (res && "error" in res && res.error) {
                 setError(res.error);
                 return;
               }
-              if (res.next) window.location.assign(res.next);
             } catch {
               setError("Could not create the account. Try again.");
             } finally {

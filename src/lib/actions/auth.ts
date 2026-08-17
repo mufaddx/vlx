@@ -7,7 +7,12 @@ import { redirect } from "next/navigation";
 import { performCompleteSignup, performSendOtp, performVerifyOtp, setupSchema } from "@/lib/otp-service";
 
 export async function sendOtpAction(formData: FormData) {
-  return performSendOtp(formData);
+  try {
+    return await performSendOtp(formData);
+  } catch (err) {
+    console.error("sendOtpAction", err);
+    return { error: "Could not send the email code. Try again in a minute." };
+  }
 }
 
 export async function verifyOtpAction(formData: FormData) {

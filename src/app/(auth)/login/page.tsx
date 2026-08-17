@@ -4,5 +4,5 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Log in", robots: { index: false } };
 
 export default function LoginPage() {
-  return <AuthScreen mode="login" photoAlt="Sign in to VIDLIX" />;
+  return <AuthScreen mode="login" />;
 }
