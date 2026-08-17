@@ -1,7 +1,5 @@
 import { PublicShell } from "@/components/public-shell";
 import { HelpCenter } from "@/components/help-center";
-import { CoverPhoto } from "@/components/cover-photo";
-import { photos } from "@/lib/marketing-photos";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -23,9 +21,6 @@ export default function HelpPage() {
           </Link>
           .
         </p>
-        <div className="relative mt-8 h-48 overflow-hidden rounded-3xl sm:h-64">
-          <CoverPhoto src={photos.help} alt="VIDLIX help" sizes="100vw" />
-        </div>
         <div className="mt-10">
           <HelpCenter />
         </div>

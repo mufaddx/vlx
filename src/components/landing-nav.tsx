@@ -71,7 +71,7 @@ export function LandingNav() {
       </header>
 
       {open ? (
-        <div className="fixed inset-x-0 bottom-0 top-[4.5rem] z-40 flex flex-col bg-white lg:hidden dark:bg-ink-950">
+        <div className="fixed inset-x-0 bottom-0 top-[4.5rem] z-50 flex flex-col bg-white lg:hidden dark:bg-ink-950">
           <nav className="flex-1 overflow-y-auto px-4 py-4" aria-label="Mobile">
             {links.map((l) => (
               <a

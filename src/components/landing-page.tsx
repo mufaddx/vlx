@@ -4,7 +4,7 @@ import { Reveal } from "@/components/reveal";
 import { photos } from "@/lib/marketing-photos";
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto max-w-7xl px-4 sm:px-6">{children}</div>;
+  return <div className="mx-auto max-w-7xl lg:px-6">{children}</div>;
 }
 
 function Card({
@@ -19,7 +19,7 @@ function Card({
   return (
     <section id={id} className="scroll-mt-24">
       <div
-        className={`rounded-2xl border border-mist-200 bg-white p-5 dark:border-white/10 dark:bg-ink-950 sm:p-8 lg:p-10 ${className}`}
+        className={`px-4 py-8 lg:rounded-2xl lg:border lg:border-mist-200 lg:bg-white lg:p-10 dark:lg:border-white/10 dark:lg:bg-ink-950 ${className}`}
       >
         {children}
       </div>
@@ -57,7 +57,7 @@ export function LandingPage({
   const shortFaqs = faqs.slice(0, 6);
 
   return (
-    <div id="home" className="space-y-5 pb-16 pt-5 sm:space-y-6 sm:pt-6 lg:space-y-8 lg:pb-24 lg:pt-8">
+    <div id="home" className="space-y-0 pb-28 pt-2 lg:space-y-8 lg:pb-24 lg:pt-8">
       <Shell>
         <Card>
           <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
@@ -66,12 +66,8 @@ export function LandingPage({
                 <Mark />
                 <Kicker>Privacy-first video</Kicker>
               </div>
-              <h1 className="mt-5 font-heading text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">
-                Meet.
-                <br />
-                Connect.
-                <br />
-                Discover.
+              <h1 className="mt-5 whitespace-nowrap font-heading text-[clamp(1.05rem,5.2vw,1.75rem)] font-semibold leading-none tracking-tight sm:text-3xl lg:text-5xl">
+                Meet. Connect. Discover.
               </h1>
               <div className="mt-5 h-px w-16 bg-ink-900/15 dark:bg-white/15" />
               <p className="mt-5 text-[15px] leading-relaxed text-mist-600 dark:text-mist-300 sm:text-base">
@@ -90,26 +86,18 @@ export function LandingPage({
                   How it works
                 </a>
               </div>
-              <div className="mt-7 flex flex-col gap-3 lg:hidden">
-                <div className="flex gap-3">
-                  <a href="/signup" className="btn-primary flex-1 text-center">
-                    Sign up
-                  </a>
-                  <a href="/login" className="btn-secondary flex-1 text-center">
-                    Sign in
-                  </a>
-                </div>
-                <a href="/#how" className="btn-ghost w-full text-center">
-                  How it works
-                </a>
-              </div>
+              <a href="/#how" className="mt-6 inline-block text-sm underline underline-offset-4 lg:hidden">
+                How it works
+              </a>
             </Reveal>
-            <div className="relative order-1 aspect-video overflow-hidden rounded-xl bg-mist-100 dark:bg-ink-900 lg:order-2">
-              <div className="absolute inset-0 lg:hidden">
-                <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="cover" sizes="100vw" priority />
-              </div>
-              <div className="absolute inset-0 hidden lg:block">
-                <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
+            <div className="order-1 lg:order-2">
+              <div className="-mx-4 lg:mx-0">
+                <div className="lg:hidden">
+                  <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="natural" sizes="100vw" priority />
+                </div>
+                <div className="relative hidden aspect-video overflow-hidden rounded-xl bg-mist-100 dark:bg-ink-900 lg:block">
+                  <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
+                </div>
               </div>
             </div>
           </div>
@@ -147,7 +135,7 @@ export function LandingPage({
                   d: "Matching is random. It is not Dating unless you later opt into Dating. Treat every call as a first meeting.",
                 },
               ].map((x) => (
-                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
                 </div>
@@ -183,7 +171,7 @@ export function LandingPage({
                   d: "Create a room, share it, accept or decline join requests. You are responsible for who appears on camera.",
                 },
               ].map((x) => (
-                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
                 </div>
@@ -219,7 +207,7 @@ export function LandingPage({
                   d: "When you both like, you can move to chat. Plans may change limits. Those entitlements live in Admin.",
                 },
               ].map((x) => (
-                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
                 </div>
@@ -255,7 +243,7 @@ export function LandingPage({
                   d: "The anonymous call stays anonymous. You can still block or report. A follow is not a permanent contract.",
                 },
               ].map((x) => (
-                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
                 </div>
@@ -292,7 +280,7 @@ export function LandingPage({
                   d: "Report a conversation, block the other person, and leave. Treat links and money requests with the same caution you would anywhere on the web.",
                 },
               ].map((x) => (
-                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
                 </div>
@@ -330,7 +318,7 @@ export function LandingPage({
                   d: "Private chat and further video are for people who already chose each other. Block, report, or leave at any time. Plans can expand limits; they do not remove safety tools.",
                 },
               ].map((s) => (
-                <li key={s.n} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                <li key={s.n} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
                   <p className="text-xs tracking-[0.18em] text-mist-400">{s.n}</p>
                   <p className="mt-2 font-heading text-lg font-semibold">{s.t}</p>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{s.d}</p>
@@ -357,7 +345,7 @@ export function LandingPage({
               {plans.map((p) => (
                 <div
                   key={p.id}
-                  className={`rounded-xl border border-mist-200 p-5 dark:border-white/10 ${p.highlight ? "ring-1 ring-violet" : ""}`}
+                  className={`py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10 ${p.highlight ? "lg:ring-1 lg:ring-violet" : ""}`}
                 >
                   <p className="text-sm text-mist-500">{p.name}</p>
                   <p className="mt-2 font-heading text-2xl font-semibold">
@@ -396,7 +384,7 @@ export function LandingPage({
                   d: "We will not promise every stranger is kind. We will not record random calls as a product feature. We will not put you in Dating without opt-in.",
                 },
               ].map((x) => (
-                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
                 </div>
@@ -446,6 +434,20 @@ export function LandingPage({
           </Reveal>
         </Card>
       </Shell>
+
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 px-4 lg:hidden"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <div className="mx-auto flex max-w-7xl gap-2 rounded-full border border-mist-200 bg-white/95 p-2 shadow-sm backdrop-blur dark:border-white/10 dark:bg-ink-950/95">
+          <a href="/login" className="btn-secondary flex-1 text-center">
+            Sign in
+          </a>
+          <a href="/signup" className="btn-primary flex-1 text-center">
+            Sign up
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
