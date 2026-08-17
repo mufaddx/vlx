@@ -46,7 +46,7 @@ const cols = [
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-10 border-t border-mist-200 bg-white/80 dark:border-white/10 dark:bg-ink-900/80">
+    <footer className="relative z-10 border-t border-mist-200 dark:border-white/10">
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-6 py-16 lg:grid-cols-5">
         <div className="col-span-2 lg:col-span-1">
           <Logo />

@@ -3,9 +3,9 @@ import { SiteFooter } from "@/components/site-footer";
 
 export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen">
       <LandingNav />
-      {children}
+      <div className="pt-16">{children}</div>
       <SiteFooter />
     </div>
   );

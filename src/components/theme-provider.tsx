@@ -8,15 +8,16 @@ const ThemeContext = createContext<{
   theme: Theme;
   setTheme: (t: Theme) => void;
   resolved: "light" | "dark";
-}>({ theme: "system", setTheme: () => {}, resolved: "dark" });
+}>({ theme: "light", setTheme: () => {}, resolved: "light" });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [resolved, setResolved] = useState<"light" | "dark">("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
+  const [resolved, setResolved] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     const saved = window.localStorage.getItem("vidlix-theme") as Theme | null;
     if (saved === "light" || saved === "dark" || saved === "system") setThemeState(saved);
+    else setThemeState("light");
   }, []);
 
   useEffect(() => {

@@ -29,8 +29,8 @@ export function LandingNav() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-6">
-      <div className="relative z-50 mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-mist-200/80 bg-white/90 px-3 py-2 shadow-glass backdrop-blur-xl dark:border-white/10 dark:bg-ink-800/90">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-mist-200/80 bg-white/92 backdrop-blur-md dark:border-white/10 dark:bg-ink-950/92">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Logo />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
           {links.map((l) => (
@@ -77,7 +77,7 @@ export function LandingNav() {
             aria-label="Close menu"
             onClick={() => setOpen(false)}
           />
-          <div className="fixed bottom-3 right-3 top-3 z-50 flex w-[min(20rem,calc(100%-1.5rem))] flex-col overflow-y-auto rounded-2xl border border-mist-200/80 bg-white/95 p-5 shadow-glass backdrop-blur-xl dark:border-white/10 dark:bg-ink-800/95">
+          <div className="fixed bottom-0 right-0 top-16 z-50 flex w-[min(20rem,100%)] flex-col overflow-y-auto border-l border-mist-200 bg-white p-6 dark:border-white/10 dark:bg-ink-950">
             <div className="mb-6 flex items-center justify-between">
               <Logo />
               <button

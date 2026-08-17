@@ -1,4 +1,3 @@
-import nodemailer from "nodemailer";
 import type { OtpProvider } from "./types";
 
 export function smtpConfigured() {
@@ -16,8 +15,9 @@ export class SmtpOtpProvider implements OtpProvider {
     if (!smtpConfigured()) {
       throw new Error("SMTP is not configured");
     }
+    const mailer = await import("nodemailer");
     const port = Number(process.env.SMTP_PORT ?? 465);
-    const transporter = nodemailer.createTransport({
+    const transporter = mailer.default.createTransport({
       host: process.env.SMTP_HOST ?? "smtp.hostinger.com",
       port,
       secure: port === 465,
