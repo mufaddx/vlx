@@ -419,7 +419,7 @@ export function LandingPage({
       <Section id="how" eyebrow="How it works" title="Four steps to VIDLIX.">
         <ol className="grid gap-4 md:grid-cols-4">
           {[
-            ["Create your account.", "Email or mobile, OTP, 18+ profile."],
+            ["Create your account.", "Email OTP, then an 18+ profile. No mobile OTP."],
             ["Choose what you want.", "Random Video, Live, or Dating."],
             ["Connect and interact.", "Match, watch, like, follow."],
             ["Continue privately.", "Chat, private video, subscriptions."],

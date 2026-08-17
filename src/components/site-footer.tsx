@@ -5,13 +5,13 @@ const cols = [
   {
     title: "Product",
     links: [
-      ["#random", "Random Video"],
-      ["#live", "Live"],
-      ["#dating", "Dating"],
-      ["#chat", "Chat"],
-      ["/home", "Search"],
-      ["/home", "Connections"],
-      ["#pricing", "Pricing"],
+      ["/#random", "Random Video"],
+      ["/#live", "Live"],
+      ["/#dating", "Dating"],
+      ["/#chat", "Chat"],
+      ["/#pricing", "Pricing"],
+      ["/login", "Log in"],
+      ["/signup", "Sign up"],
     ],
   },
   {
@@ -19,8 +19,8 @@ const cols = [
     links: [
       ["/safety", "Safety Center"],
       ["/community-guidelines", "Community Guidelines"],
-      ["/contact", "Report Abuse"],
-      ["/safety", "Block & Report"],
+      ["/contact", "Report abuse"],
+      ["/help", "Block & report help"],
     ],
   },
   {
@@ -28,7 +28,7 @@ const cols = [
     links: [
       ["/about", "About"],
       ["/contact", "Contact"],
-      ["/about", "Careers"],
+      ["/careers", "Careers"],
       ["/help", "Help Center"],
     ],
   },
@@ -60,7 +60,7 @@ export function SiteFooter() {
             <p className="text-sm font-semibold">{col.title}</p>
             <ul className="mt-4 space-y-2">
               {col.links.map(([href, label]) => (
-                <li key={label}>
+                <li key={`${href}-${label}`}>
                   <Link
                     href={href}
                     className="text-sm text-mist-500 hover:text-ink-900 dark:text-mist-400 dark:hover:text-white"
@@ -76,7 +76,7 @@ export function SiteFooter() {
       <div className="border-t border-mist-200 px-6 py-6 dark:border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 text-sm text-mist-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© VIDLIX · All Rights Reserved.</p>
-          <p>Web only · 18+</p>
+          <p>Web only · 18+ · Email OTP only</p>
         </div>
       </div>
     </footer>

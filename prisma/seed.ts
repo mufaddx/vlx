@@ -27,9 +27,10 @@ const legal: Array<[string, string, string]> = [
   ["subscription-policy", "Subscription Policy", "Plans, prices, sponsored connection slots, and feature entitlements are defined by Super Admin. Upgrades take effect after a successful payment through the configured PaymentProvider."],
   ["community-guidelines", "Community Guidelines", "Be 18+. No harassment, sexual content involving minors, scams, or recording of private calls. Report abuse. Moderators may warn, suspend, or ban."],
   ["safety", "Safety Center", "Use anonymous random calling, block, report, and privacy controls. Never share financial details with strangers. VIDLIX does not record random calls. Visit Help if you need support."],
-  ["contact", "Contact", "Email support@vidlix.com for product help. For abuse reports, use in-app Report or write to safety@vidlix.com."],
-  ["help", "Help Center", "Find answers about Random Video, Live, Dating, subscriptions, sponsored connections, and account security. If you cannot sign in, use account recovery from the login screen."],
+  ["contact", "Contact", "Email hello@vidlix.in for product help. For abuse reports, use in-app Report or write to safety@vidlix.in."],
+  ["help", "Help Center", "Find answers about Random Video, Live, Dating, subscriptions, sponsored connections, and account security. Login uses email OTP only — no mobile OTP. If you cannot sign in, request a new email code from the login screen."],
   ["about", "About VIDLIX", "VIDLIX is a web-only social technology platform for private random video, live, optional dating, and sponsored premium connections — designed so random really means random."],
+  ["careers", "Careers", "VIDLIX is not listing public job openings at the moment. Email hello@vidlix.in if you want to be considered later."],
 ];
 
 async function main() {

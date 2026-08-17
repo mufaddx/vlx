@@ -7,14 +7,14 @@ import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 
 const links = [
-  { href: "#home", label: "Home" },
-  { href: "#random", label: "Random Video" },
-  { href: "#live", label: "Live" },
-  { href: "#dating", label: "Dating" },
-  { href: "#features", label: "Features" },
-  { href: "#how", label: "How It Works" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#safety", label: "Safety" },
+  { href: "/#home", label: "Home" },
+  { href: "/#random", label: "Random Video" },
+  { href: "/#live", label: "Live" },
+  { href: "/#dating", label: "Dating" },
+  { href: "/#features", label: "Features" },
+  { href: "/#how", label: "How It Works" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#safety", label: "Safety" },
 ];
 
 export function LandingNav() {
@@ -25,7 +25,7 @@ export function LandingNav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-mist-200/80 bg-white/80 px-3 py-2 shadow-glass backdrop-blur-xl dark:border-white/10 dark:bg-ink-800/80">
         <Logo />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-          {links.map((l) => (
+            {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
@@ -34,6 +34,12 @@ export function LandingNav() {
               {l.label}
             </a>
           ))}
+          <Link
+            href="/help"
+            className="rounded-lg px-2.5 py-2 text-sm font-medium text-mist-500 hover:bg-mist-100 hover:text-ink-900 dark:text-mist-400 dark:hover:bg-white/10 dark:hover:text-white"
+          >
+            Help
+          </Link>
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           <ThemeToggle />
@@ -74,6 +80,9 @@ export function LandingNav() {
                   {l.label}
                 </a>
               ))}
+            <Link href="/help" className="rounded-lg px-3 py-3 text-base font-medium" onClick={() => setOpen(false)}>
+              Help
+            </Link>
             <Link href="/login" className="rounded-lg px-3 py-3 text-base font-medium" onClick={() => setOpen(false)}>
               Login
             </Link>

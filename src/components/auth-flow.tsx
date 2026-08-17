@@ -20,8 +20,8 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
       </h1>
       <p className="mt-2 text-sm text-mist-500">
         {mode === "login"
-          ? "Email or mobile, then a one-time code. No password. Account recovery is the same OTP login."
-          : "You must be 18+. Camera is not requested during signup."}
+          ? "Email, then a one-time code. No password. No mobile OTP. Account recovery is the same email login."
+          : "You must be 18+. Camera is not requested during signup. We only send OTP to email."}
       </p>
 
       {error ? (
@@ -46,16 +46,18 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
           }}
         >
           <label className="block text-sm font-medium" htmlFor="identifier">
-            Email or mobile number
+            Email
           </label>
           <input
             id="identifier"
             name="identifier"
+            type="email"
             className="input"
             required
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
-            autoComplete={mode === "login" ? "username" : "email"}
+            autoComplete="email"
+            inputMode="email"
           />
           <input type="hidden" name="purpose" value={mode} />
           <button className="btn-primary w-full" disabled={pending} type="submit">

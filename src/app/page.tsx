@@ -1,5 +1,4 @@
-import { LandingNav } from "@/components/landing-nav";
-import { SiteFooter } from "@/components/site-footer";
+import { PublicShell } from "@/components/public-shell";
 import { LandingPage } from "@/components/landing-page";
 import { prisma } from "@/lib/db";
 import { FALLBACK_FAQS, FALLBACK_PLANS } from "@/lib/marketing-fallback";
@@ -28,10 +27,8 @@ async function loadMarketing() {
 export default async function Home() {
   const { plans, faqs } = await loadMarketing();
   return (
-    <div className="min-h-screen">
-      <LandingNav />
+    <PublicShell>
       <LandingPage plans={plans} faqs={faqs} />
-      <SiteFooter />
-    </div>
+    </PublicShell>
   );
 }

@@ -9,19 +9,14 @@ import { rateLimit } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
-const identifierSchema = z
-  .string()
-  .trim()
-  .min(3)
-  .max(120)
-  .refine((v) => v.includes("@") || /^\+?[0-9]{8,15}$/.test(v), "Enter a valid email or mobile number");
-
-function channelOf(identifier: string): "email" | "sms" {
-  return identifier.includes("@") ? "email" : "sms";
-}
+const identifierSchema = z.string().trim().toLowerCase().email("Enter a valid email address");
 
 export async function sendOtpAction(formData: FormData) {
-  const identifier = identifierSchema.parse(String(formData.get("identifier") ?? ""));
+  const parsedId = identifierSchema.safeParse(String(formData.get("identifier") ?? ""));
+  if (!parsedId.success) {
+    return { error: parsedId.error.issues[0]?.message ?? "Enter a valid email address" };
+  }
+  const identifier = parsedId.data;
   const purpose = z.enum(["login", "signup"]).parse(String(formData.get("purpose") ?? "login"));
   const hdrs = await headers();
   const ip = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
@@ -31,7 +26,7 @@ export async function sendOtpAction(formData: FormData) {
   }
 
   const existing = await prisma.user.findFirst({
-    where: identifier.includes("@") ? { email: identifier.toLowerCase() } : { phone: identifier },
+    where: { email: identifier },
   });
   if (purpose === "login" && !existing) {
     return { error: "No account found. Create one instead." };
@@ -43,8 +38,8 @@ export async function sendOtpAction(formData: FormData) {
   const code = generateOtp();
   await prisma.otpVerification.create({
     data: {
-      identifier: identifier.toLowerCase(),
-      channel: channelOf(identifier),
+      identifier,
+      channel: "email",
       codeHash: hashValue(code),
       purpose,
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
@@ -53,7 +48,7 @@ export async function sendOtpAction(formData: FormData) {
   });
   await providers.otp.send({
     to: identifier,
-    channel: channelOf(identifier),
+    channel: "email",
     code,
     purpose,
   });
@@ -62,7 +57,11 @@ export async function sendOtpAction(formData: FormData) {
 }
 
 export async function verifyOtpAction(formData: FormData) {
-  const identifier = identifierSchema.parse(String(formData.get("identifier") ?? ""));
+  const parsedId = identifierSchema.safeParse(String(formData.get("identifier") ?? ""));
+  if (!parsedId.success) {
+    return { error: parsedId.error.issues[0]?.message ?? "Enter a valid email address" };
+  }
+  const identifier = parsedId.data;
   const purpose = z.enum(["login", "signup"]).parse(String(formData.get("purpose") ?? "login"));
   const code = z.string().trim().min(4).max(8).parse(String(formData.get("code") ?? ""));
 
@@ -94,9 +93,7 @@ export async function verifyOtpAction(formData: FormData) {
 
   if (purpose === "login") {
     const user = await prisma.user.findFirst({
-      where: identifier.includes("@")
-        ? { email: identifier.toLowerCase() }
-        : { phone: identifier },
+      where: { email: identifier },
     });
     if (!user) return { error: "Account not found." };
     const hdrs = await headers();
@@ -161,26 +158,24 @@ export async function completeSignupAction(formData: FormData) {
     },
     orderBy: { createdAt: "desc" },
   });
-  if (!verified) return { error: "Verify your email or mobile before finishing signup." };
+  if (!verified) return { error: "Verify your email before finishing signup." };
 
   const taken = await prisma.user.findUnique({ where: { username: data.username } });
   if (taken) return { error: "That username is taken." };
 
-  const email = data.identifier.includes("@") ? data.identifier.toLowerCase() : null;
-  const phone = email ? null : data.identifier;
-
+  const email = data.identifier;
   const now = new Date();
   const user = await prisma.user.create({
     data: {
       email,
-      phone,
+      phone: null,
       username: data.username,
       firstName: data.firstName,
       lastName: data.lastName,
       dateOfBirth: dob,
       gender: data.gender,
-      emailVerifiedAt: email ? now : null,
-      phoneVerifiedAt: phone ? now : null,
+      emailVerifiedAt: now,
+      phoneVerifiedAt: null,
       termsAcceptedAt: now,
       privacyAcceptedAt: now,
       guidelinesAcceptedAt: now,
