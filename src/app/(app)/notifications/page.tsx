@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { markNotificationsReadAction } from "@/lib/actions/social";
+import { asFormAction } from "@/lib/form-action";
 import Link from "next/link";
 
 export const metadata = { title: "Notifications", robots: { index: false } };
@@ -17,7 +18,7 @@ export default async function Page() {
     <div>
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-heading text-3xl font-semibold">Notifications</h1>
-        <form action={markNotificationsReadAction}>
+        <form action={asFormAction(markNotificationsReadAction)}>
           <button className="btn-ghost" type="submit">
             Mark read
           </button>

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { adminSavePlanAction } from "@/lib/actions/admin";
+import { asFormAction } from "@/lib/form-action";
 
 export default async function Page() {
   const plans = await prisma.subscriptionPlan.findMany({ orderBy: { sortOrder: "asc" } });
@@ -9,7 +10,7 @@ export default async function Page() {
       <p className="mt-2 text-sm text-mist-500">Nothing important is hard-coded. Edit entitlements here.</p>
       <div className="mt-6 grid gap-6">
         {plans.map((p) => (
-          <form key={p.id} action={adminSavePlanAction} className="grid gap-2 rounded-2xl border border-mist-200 p-4 dark:border-white/10 md:grid-cols-4">
+          <form key={p.id} action={asFormAction(adminSavePlanAction)} className="grid gap-2 rounded-2xl border border-mist-200 p-4 dark:border-white/10 md:grid-cols-4">
             <input type="hidden" name="id" value={p.id} />
             <input name="name" className="input" defaultValue={p.name} />
             <input name="slug" className="input" defaultValue={p.slug} />

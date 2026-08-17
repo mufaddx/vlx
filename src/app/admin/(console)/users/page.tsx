@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { adminGrantPlanAction, adminSuspendUserAction } from "@/lib/actions/admin";
+import { asFormAction } from "@/lib/form-action";
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q = "" } = await searchParams;
@@ -26,11 +27,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ q
                 <td>{u.subscriptions[0]?.plan.name ?? "—"}</td>
                 <td>{u.status}</td>
                 <td className="space-y-1 py-2">
-                  <form action={adminSuspendUserAction.bind(null, u.id, "suspended")}><button className="btn-ghost" type="submit">Suspend</button></form>
-                  <form action={adminSuspendUserAction.bind(null, u.id, "banned")}><button className="btn-ghost" type="submit">Ban</button></form>
-                  <form action={adminSuspendUserAction.bind(null, u.id, "active")}><button className="btn-ghost" type="submit">Unban</button></form>
+                  <form action={asFormAction(adminSuspendUserAction.bind(null, u.id, "suspended"))}><button className="btn-ghost" type="submit">Suspend</button></form>
+                  <form action={asFormAction(adminSuspendUserAction.bind(null, u.id, "banned"))}><button className="btn-ghost" type="submit">Ban</button></form>
+                  <form action={asFormAction(adminSuspendUserAction.bind(null, u.id, "active"))}><button className="btn-ghost" type="submit">Unban</button></form>
                   {plans[0] ? (
-                    <form action={adminGrantPlanAction.bind(null, u.id, plans.find((p) => p.slug === "pro")?.id ?? plans[0].id)}>
+                    <form action={asFormAction(adminGrantPlanAction.bind(null, u.id, plans.find((p) => p.slug === "pro")?.id ?? plans[0].id))}>
                       <button className="btn-ghost" type="submit">Grant Pro</button>
                     </form>
                   ) : null}

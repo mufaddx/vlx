@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getEntitlements } from "@/lib/social";
 import { inviteSponsoredAction, respondSponsoredAction, startCheckoutAction } from "@/lib/actions/billing";
+import { asFormAction } from "@/lib/form-action";
 
 export const metadata = { title: "Subscription", robots: { index: false } };
 
@@ -30,7 +31,7 @@ export default async function Page() {
       </p>
       <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         {plans.map((p) => (
-          <form key={p.id} action={startCheckoutAction.bind(null, p.id)} className={`rounded-3xl border p-5 ${p.highlight ? "border-violet bg-ink-900 text-white" : "border-mist-200 dark:border-white/10"}`}>
+          <form key={p.id} action={asFormAction(startCheckoutAction.bind(null, p.id))} className={`rounded-3xl border p-5 ${p.highlight ? "border-violet bg-ink-900 text-white" : "border-mist-200 dark:border-white/10"}`}>
             <p className="text-sm uppercase tracking-widest opacity-70">{p.name}</p>
             <p className="mt-2 font-heading text-3xl">{p.priceCents === 0 ? "Free" : `$${(p.priceCents / 100).toFixed(0)}`}</p>
             <ul className="mt-3 space-y-1 text-sm opacity-80">
@@ -50,7 +51,7 @@ export default async function Page() {
 
       <h2 className="mt-12 font-heading text-2xl font-semibold">Sponsored Premium Connection</h2>
       <p className="mt-2 text-sm text-mist-500">You keep your subscription. This is not a transfer.</p>
-      <form action={inviteSponsoredAction} className="mt-4 flex max-w-md gap-2">
+      <form action={asFormAction(inviteSponsoredAction)} className="mt-4 flex max-w-md gap-2">
         <input name="username" className="input" placeholder="VIDLIX username" />
         <button className="btn-primary" type="submit">Send invite</button>
       </form>
@@ -63,10 +64,10 @@ export default async function Page() {
         <div className="mt-6">
           <p className="font-semibold">Invites for you</p>
           {incoming.map((s) => (
-            <form key={s.id} className="mt-2 flex items-center gap-2" action={respondSponsoredAction.bind(null, s.id, true)}>
+            <form key={s.id} className="mt-2 flex items-center gap-2" action={asFormAction(respondSponsoredAction.bind(null, s.id, true))}>
               <span>@{s.sponsor.username} offered sponsored access</span>
               <button className="btn-primary" type="submit">Accept</button>
-              <button className="btn-secondary" formAction={respondSponsoredAction.bind(null, s.id, false)} type="submit">Decline</button>
+              <button className="btn-secondary" formAction={asFormAction(respondSponsoredAction.bind(null, s.id, false))} type="submit">Decline</button>
             </form>
           ))}
         </div>

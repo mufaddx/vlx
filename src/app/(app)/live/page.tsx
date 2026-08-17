@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { goLiveAction } from "@/lib/actions/live";
+import { asFormAction } from "@/lib/form-action";
 
 export const metadata = { title: "Live", robots: { index: false } };
 
@@ -28,7 +29,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-heading text-3xl font-semibold">Live</h1>
-        <form action={goLiveAction} className="flex gap-2">
+        <form action={asFormAction(goLiveAction)} className="flex gap-2">
           <input name="title" className="input" placeholder="Live title" defaultValue={`${me.firstName}'s live`} />
           <input name="category" className="input max-w-32" placeholder="Category" defaultValue="talk" />
           <button className="btn-primary" type="submit">Go Live</button>

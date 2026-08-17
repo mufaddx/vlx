@@ -9,6 +9,7 @@ import {
 } from "@/lib/actions/live";
 import { blockUserAction } from "@/lib/actions/social";
 import { ReportForm } from "./report-form";
+import { asFormAction } from "@/lib/form-action";
 
 export function LiveRoomClient({
   streamId,
@@ -25,7 +26,7 @@ export function LiveRoomClient({
           <button className="btn-primary" disabled={pending} type="button" onClick={() => start(async () => { await requestJoinLiveAction(streamId); })}>
             Request to join
           </button>
-          <form action={leaveLiveAction.bind(null, streamId)}>
+          <form action={asFormAction(leaveLiveAction.bind(null, streamId))}>
             <button className="btn-secondary" type="submit">Leave</button>
           </form>
         </>
@@ -34,7 +35,7 @@ export function LiveRoomClient({
           End live
         </button>
       )}
-      <form action={sendLiveChatAction} className="flex min-w-[240px] flex-1 gap-2">
+      <form action={asFormAction(sendLiveChatAction)} className="flex min-w-[240px] flex-1 gap-2">
         <input type="hidden" name="streamId" value={streamId} />
         <input name="body" className="input" placeholder="Live chat" />
         <button className="btn-primary" type="submit">Send</button>

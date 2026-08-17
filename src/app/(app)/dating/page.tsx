@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { saveDatingProfileAction, datingSwipeAction } from "@/lib/actions/dating";
 import { isBlockedEitherWay } from "@/lib/social";
 import { ageFromDob } from "@/lib/crypto";
+import { asFormAction } from "@/lib/form-action";
 
 export const metadata = { title: "Dating", robots: { index: false } };
 
@@ -26,7 +27,7 @@ export default async function Page({
         <p className="mt-2 max-w-xl text-mist-500">
           A normal account is not added to Dating automatically. Create a profile when you want.
         </p>
-        <form action={saveDatingProfileAction} className="mt-8 max-w-lg space-y-3">
+        <form action={asFormAction(saveDatingProfileAction)} className="mt-8 max-w-lg space-y-3">
           <input name="bio" className="input" placeholder="Bio" />
           <input name="intention" className="input" placeholder="Dating intention" />
           <input name="locationLabel" className="input" placeholder="Location" />
@@ -72,7 +73,6 @@ export default async function Page({
 
   const likes = await prisma.datingSwipe.findMany({
     where: { toUserId: me.id, action: "like" },
-    include: { },
   });
   const likeUsers = await prisma.user.findMany({
     where: { id: { in: likes.map((l) => l.fromUserId) } },
@@ -134,10 +134,10 @@ export default async function Page({
                   ))}
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                  <form action={datingSwipeAction.bind(null, card.p.userId, "pass")}>
+                  <form action={asFormAction(datingSwipeAction.bind(null, card.p.userId, "pass"))}>
                     <button className="btn-secondary w-full" type="submit">Pass</button>
                   </form>
-                  <form action={datingSwipeAction.bind(null, card.p.userId, "like")}>
+                  <form action={asFormAction(datingSwipeAction.bind(null, card.p.userId, "like"))}>
                     <button className="btn-primary w-full" type="submit">Like</button>
                   </form>
                 </div>
@@ -170,7 +170,7 @@ export default async function Page({
       ) : null}
 
       {tab === "profile" ? (
-        <form action={saveDatingProfileAction} className="mt-6 max-w-lg space-y-3">
+        <form action={asFormAction(saveDatingProfileAction)} className="mt-6 max-w-lg space-y-3">
           <textarea name="bio" className="input min-h-24 py-3" defaultValue={myDating.bio} />
           <input name="intention" className="input" defaultValue={myDating.intention} />
           <input name="locationLabel" className="input" defaultValue={myDating.locationLabel} />

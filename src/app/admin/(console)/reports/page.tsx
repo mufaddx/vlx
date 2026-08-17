@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { adminModerationAction } from "@/lib/actions/admin";
+import { asFormAction } from "@/lib/form-action";
 
 export default async function Page() {
   const reports = await prisma.report.findMany({ orderBy: { createdAt: "desc" }, take: 80, include: { fromUser: true, toUser: true } });
@@ -13,7 +14,7 @@ export default async function Page() {
             <p className="text-mist-500">{r.details}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {(["dismiss", "warn", "suspend", "ban"] as const).map((a) => (
-                <form key={a} action={adminModerationAction.bind(null, r.id, a)}>
+                <form key={a} action={asFormAction(adminModerationAction.bind(null, r.id, a))}>
                   <button className="btn-ghost capitalize" type="submit">{a}</button>
                 </form>
               ))}
