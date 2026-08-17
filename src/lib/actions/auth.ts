@@ -11,6 +11,31 @@ import { headers } from "next/headers";
 
 const identifierSchema = z.string().trim().toLowerCase().email("Enter a valid email address");
 
+function publicSendError(err: unknown) {
+  const code =
+    typeof err === "object" && err && "code" in err ? String((err as { code?: unknown }).code) : "";
+  const msg = err instanceof Error ? err.message : "";
+  if (code.startsWith("P100") || code === "P1017" || /can't reach database|connection/i.test(msg)) {
+    return "Could not reach the database. Check DATABASE_URL on the server.";
+  }
+  if (code === "P2021" || code === "P2022" || /does not exist/i.test(msg)) {
+    return "Database tables are missing. On the server run: npx prisma db push";
+  }
+  if (code === "EAUTH" || /invalid login|authentication failed|535/i.test(msg)) {
+    return "Email login failed. Check SMTP_USER and SMTP_PASS (mailbox app password) on Hostinger.";
+  }
+  if (
+    ["ESOCKET", "ECONNECTION", "ETIMEDOUT", "ECONNREFUSED", "EDNS", "EAI_AGAIN", "ETLS"].includes(code) ||
+    /connect|timeout|socket/i.test(msg)
+  ) {
+    return "Could not reach smtp.hostinger.com. Try SMTP_PORT=587, or allow outbound mail on the Node host.";
+  }
+  if (/SMTP is not configured/i.test(msg)) {
+    return "SMTP is not set. Add SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM on the server, then redeploy.";
+  }
+  return "Could not send the email code. Try again in a minute.";
+}
+
 export async function sendOtpAction(formData: FormData) {
   try {
     const parsedId = identifierSchema.safeParse(String(formData.get("identifier") ?? ""));
@@ -49,14 +74,23 @@ export async function sendOtpAction(formData: FormData) {
         ipAddress: ip,
       },
     });
-    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-      const { SmtpOtpProvider } = await import("@/lib/providers/smtp-otp");
-      await new SmtpOtpProvider().send({
-        to: identifier,
-        channel: "email",
-        code,
-        purpose,
-      });
+    const smtpUser = (process.env.SMTP_USER ?? "").trim();
+    const smtpPass = (process.env.SMTP_PASS ?? "").trim();
+    if (smtpUser && smtpPass) {
+      try {
+        const { SmtpOtpProvider } = await import("@/lib/providers/smtp-otp");
+        await new SmtpOtpProvider().send({
+          to: identifier,
+          channel: "email",
+          code,
+          purpose,
+        });
+      } catch (mailErr) {
+        console.error("sendOtpAction.smtp", mailErr);
+        return { error: publicSendError(mailErr) };
+      }
+    } else if (process.env.NODE_ENV === "production") {
+      return { error: "SMTP is not set. Add SMTP_USER and SMTP_PASS on Hostinger, then redeploy." };
     } else {
       await providers.otp.send({
         to: identifier,
@@ -69,7 +103,7 @@ export async function sendOtpAction(formData: FormData) {
     return { ok: true as const, hint: show ? code : undefined };
   } catch (err) {
     console.error("sendOtpAction", err);
-    return { error: "Could not send the email code. Try again in a minute." };
+    return { error: publicSendError(err) };
   }
 }
 
