@@ -27,7 +27,7 @@ async function livekitToken(input: {
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
     .setIssuer(apiKey)
     .setSubject(input.identity)
-    .setNbf(Math.floor(Date.now() / 1000) - 10)
+    .setNotBefore(Math.floor(Date.now() / 1000) - 10)
     .setExpirationTime("6h")
     .sign(new TextEncoder().encode(apiSecret));
 }

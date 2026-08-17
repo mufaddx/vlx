@@ -8,7 +8,7 @@ import { areConnected, getEntitlements, isBlockedEitherWay } from "@/lib/social"
 export async function GET(req: NextRequest) {
   const me = await getSessionUser();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
-  if (!livekitConfigured() || !providers.video.participantToken) {
+  if (!livekitConfigured()) {
     return NextResponse.json({ error: "livekit_off" }, { status: 503 });
   }
   const kind = req.nextUrl.searchParams.get("kind");

@@ -19,7 +19,7 @@ export interface PaymentProvider {
 export interface VideoProvider {
   createRandomRoom(sessionId: string): Promise<{ roomName: string; tokenA: string; tokenB: string }>;
   createLiveRoom(streamId: string, hostId: string): Promise<{ roomName: string; hostToken: string }>;
-  participantToken?(roomName: string, identity: string, canPublish: boolean): Promise<string>;
+  participantToken(roomName: string, identity: string, canPublish: boolean): Promise<string>;
 }
 
 export interface StorageProvider {

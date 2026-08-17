@@ -6,7 +6,12 @@ import type {
 } from "./types";
 
 export class MockPaymentProvider implements PaymentProvider {
-  async createCheckout() {
+  async createCheckout(_input: {
+    userId: string;
+    planId: string;
+    amountCents: number;
+    currency: string;
+  }): Promise<{ checkoutUrl: string; providerRef: string }> {
     throw new Error(
       "Payments are not connected. Configure PaymentProvider credentials before collecting money.",
     );
@@ -27,6 +32,10 @@ export class MockVideoProvider implements VideoProvider {
       roomName: `live-${streamId}`,
       hostToken: `mock-host-${hostId}`,
     };
+  }
+
+  async participantToken(roomName: string, identity: string, canPublish: boolean) {
+    return `mock-${roomName}-${identity}-${canPublish ? "pub" : "sub"}`;
   }
 }
 

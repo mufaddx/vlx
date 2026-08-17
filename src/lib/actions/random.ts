@@ -78,7 +78,7 @@ export async function randomStatusAction() {
     const role = session.userAId === me.id ? "a" : "b";
     let livekitToken: string | undefined;
     const url = process.env.LIVEKIT_URL || process.env.NEXT_PUBLIC_LIVEKIT_URL;
-    if (session.roomName && livekitConfigured() && providers.video.participantToken) {
+    if (session.roomName && livekitConfigured()) {
       livekitToken = await providers.video.participantToken(
         session.roomName,
         `${role}-${me.id}`,
