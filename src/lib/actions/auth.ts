@@ -46,12 +46,16 @@ export async function sendOtpAction(formData: FormData) {
       ipAddress: ip,
     },
   });
-  await providers.otp.send({
-    to: identifier,
-    channel: "email",
-    code,
-    purpose,
-  });
+  try {
+    await providers.otp.send({
+      to: identifier,
+      channel: "email",
+      code,
+      purpose,
+    });
+  } catch {
+    return { error: "Could not send the email code. Try again in a minute." };
+  }
   const show = process.env.NEXT_PUBLIC_SHOW_DEV_OTP === "true" && process.env.NODE_ENV !== "production";
   return { ok: true as const, hint: show ? code : undefined };
 }

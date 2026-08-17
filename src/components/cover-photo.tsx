@@ -14,6 +14,13 @@ export function CoverPhoto({
   priority?: boolean;
 }) {
   return (
-    <Image src={src} alt={alt} fill className={`object-cover ${className}`} sizes={sizes} priority={priority} />
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={`object-cover object-center ${className}`}
+      sizes={sizes}
+      priority={priority}
+    />
   );
 }

@@ -10,22 +10,22 @@ const cols = [
       ["/#dating", "Dating"],
       ["/#chat", "Chat"],
       ["/#pricing", "Pricing"],
-      ["/login", "Log in"],
-      ["/signup", "Sign up"],
     ],
   },
   {
     title: "Safety",
     links: [
       ["/safety", "Safety Center"],
-      ["/community-guidelines", "Community Guidelines"],
+      ["/community-guidelines", "Guidelines"],
       ["/contact", "Report abuse"],
-      ["/help", "Block & report help"],
+      ["/help", "Block & report"],
+      ["/#privacy", "Privacy first"],
     ],
   },
   {
     title: "Company",
     links: [
+      ["/", "Home"],
       ["/about", "About"],
       ["/contact", "Contact"],
       ["/careers", "Careers"],
@@ -35,20 +35,20 @@ const cols = [
   {
     title: "Legal",
     links: [
-      ["/terms", "Terms & Conditions"],
+      ["/terms", "Terms"],
       ["/privacy", "Privacy Policy"],
       ["/cookie-policy", "Cookie Policy"],
       ["/refund-policy", "Refund Policy"],
-      ["/subscription-policy", "Subscription Policy"],
+      ["/subscription-policy", "Subscriptions"],
     ],
   },
 ];
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-mist-200 bg-white dark:border-white/10 dark:bg-ink-900">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-5">
-        <div>
+    <footer className="relative z-10 border-t border-mist-200 bg-white/80 dark:border-white/10 dark:bg-ink-900/80">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-6 py-16 lg:grid-cols-5">
+        <div className="col-span-2 lg:col-span-1">
           <Logo />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-mist-500 dark:text-mist-400">
             VIDLIX is a privacy-first social platform for random video, live, optional dating, and

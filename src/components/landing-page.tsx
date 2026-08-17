@@ -31,7 +31,7 @@ function Section({
   children?: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-28 mx-auto max-w-7xl px-6 py-20">
+    <section id={id} className="relative isolate z-10 scroll-mt-28 overflow-hidden mx-auto max-w-7xl px-6 py-16 sm:py-20">
       {eyebrow ? (
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-violet-deep dark:text-teal">
           {eyebrow}
@@ -178,8 +178,8 @@ export function LandingPage({
   faqs: FaqItem[];
 }) {
   return (
-    <div id="home">
-      <section className="mx-auto grid max-w-7xl items-center gap-10 px-6 pb-8 pt-8 lg:grid-cols-2 lg:pt-12">
+    <div id="home" className="relative isolate overflow-x-hidden">
+      <section className="relative isolate z-10 mx-auto grid max-w-7xl items-start gap-8 overflow-hidden px-6 pb-8 pt-8 lg:grid-cols-2 lg:items-center lg:gap-12 lg:pt-12">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-deep dark:text-teal">
             Privacy-first social video
@@ -216,7 +216,7 @@ export function LandingPage({
             ))}
           </dl>
         </div>
-        <div className="relative min-h-[280px] overflow-hidden rounded-3xl border border-mist-200 dark:border-white/10 lg:min-h-[520px]">
+        <div className="relative z-0 min-h-[240px] overflow-hidden rounded-3xl border border-mist-200 dark:border-white/10 lg:min-h-[520px]">
           <div className="absolute inset-0 lg:hidden">
             <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" sizes="100vw" priority />
           </div>

@@ -39,4 +39,22 @@ LIVEKIT_API_SECRET=...
 
 Match VIDLIX MySQL queue se hota hai. Call LiveKit room mein connect hoti hai. Recording off rakho (product rule).
 
+## Email OTP (Hostinger mailbox)
+
+hPanel → Emails → mailbox `noreply@vidlix.in` → **App password** banao (main password mat use karo).
+
+Node app **Environment variables**:
+
+```
+OTP_PROVIDER=smtp
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_USER=noreply@vidlix.in
+SMTP_PASS=<app password>
+SMTP_FROM=VIDLIX <noreply@vidlix.in>
+NEXT_PUBLIC_SHOW_DEV_OTP=false
+```
+
+`OTP_DEV_CODE` production pe **mat** rakho. Save and redeploy. Test: Sign up with your real email.
+
 **Agora** India mein backup option hai; VIDLIX spec LiveKit/SFU ke liye likhi gayi hai, isliye LiveKit default hai.
