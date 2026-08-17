@@ -13,8 +13,21 @@ export function CoverPhoto({
   className?: string;
   sizes?: string;
   priority?: boolean;
-  fit?: "cover" | "contain";
+  fit?: "cover" | "contain" | "natural";
 }) {
+  if (fit === "natural") {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        width={1080}
+        height={1350}
+        className={`h-auto w-full ${className}`}
+        sizes={sizes}
+        priority={priority}
+      />
+    );
+  }
   return (
     <Image
       src={src}

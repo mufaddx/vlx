@@ -4,33 +4,12 @@ import { CoverPhoto } from "@/components/cover-photo";
 import { Reveal } from "@/components/reveal";
 import { photos } from "@/lib/marketing-photos";
 
-function PanePhoto({
-  children,
-  hero,
-}: {
-  children: React.ReactNode;
-  hero?: boolean;
-}) {
-  return (
-    <div
-      className={`relative w-full bg-ink-950 ${
-        hero
-          ? "h-[calc(100svh-4rem)] lg:h-full"
-          : "aspect-[9/16] lg:aspect-auto lg:h-full"
-      }`}
-    >
-      {children}
-    </div>
-  );
-}
-
 function Split({
   id,
   photoLeft,
   photo,
   alt,
   visual,
-  hero,
   children,
 }: {
   id?: string;
@@ -38,7 +17,6 @@ function Split({
   photo?: string;
   alt?: string;
   visual?: React.ReactNode;
-  hero?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -46,21 +24,22 @@ function Split({
       id={id}
       className="scroll-mt-16 lg:grid lg:h-[calc(100svh-4rem)] lg:min-h-[36rem] lg:grid-cols-2 lg:overflow-hidden"
     >
-      <div className={photoLeft ? "lg:order-1" : "lg:order-2"}>
-        <PanePhoto hero={hero}>
-          {visual ?? (
-            <CoverPhoto
-              src={photo!}
-              alt={alt!}
-              fit="contain"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              priority={hero}
-            />
-          )}
-        </PanePhoto>
+      <div className={`relative ${photoLeft ? "lg:order-1" : "lg:order-2"} lg:h-full`}>
+        {visual ? (
+          visual
+        ) : (
+          <>
+            <div className="lg:hidden">
+              <CoverPhoto src={photo!} alt={alt!} fit="natural" sizes="100vw" />
+            </div>
+            <div className="relative hidden h-full min-h-[36rem] lg:block">
+              <CoverPhoto src={photo!} alt={alt!} fit="cover" sizes="50vw" />
+            </div>
+          </>
+        )}
       </div>
       <div
-        className={`flex flex-col justify-center px-5 py-10 sm:px-8 lg:order-none lg:overflow-y-auto lg:px-16 lg:py-12 ${
+        className={`flex flex-col justify-center px-5 py-8 sm:px-8 lg:overflow-y-auto lg:px-16 lg:py-12 ${
           photoLeft ? "lg:order-2" : "lg:order-1"
         }`}
       >
@@ -72,23 +51,35 @@ function Split({
 
 function RandomStage() {
   return (
-    <div className="absolute inset-0 flex flex-col">
-      <div className="relative min-h-0 flex-1">
-        <CoverPhoto src={photos.randomPeer} alt="Other person on a random call" fit="contain" sizes="50vw" />
-        <p className="absolute left-4 top-4 text-[11px] uppercase tracking-[0.2em] text-white/70">Them</p>
+    <>
+      <div className="lg:hidden">
+        <div className="relative">
+          <CoverPhoto src={photos.randomPeer} alt="Other person on a random call" fit="natural" sizes="100vw" />
+          <p className="absolute left-4 top-4 text-[11px] uppercase tracking-[0.2em] text-white/80">Them</p>
+        </div>
+        <div className="relative">
+          <CoverPhoto src={photos.randomSelf} alt="You on a random call" fit="natural" sizes="100vw" />
+          <p className="absolute left-4 top-4 text-[11px] uppercase tracking-[0.2em] text-white/80">You</p>
+        </div>
       </div>
-      <div className="relative min-h-0 flex-1 border-t border-white/10">
-        <CoverPhoto src={photos.randomSelf} alt="You on a random call" fit="contain" sizes="50vw" />
-        <p className="absolute left-4 top-4 text-[11px] uppercase tracking-[0.2em] text-white/70">You</p>
+      <div className="absolute inset-0 hidden flex-col lg:flex">
+        <div className="relative min-h-0 flex-1">
+          <CoverPhoto src={photos.randomPeer} alt="Other person on a random call" fit="cover" sizes="50vw" />
+          <p className="absolute left-4 top-4 text-[11px] uppercase tracking-[0.2em] text-white/80">Them</p>
+        </div>
+        <div className="relative min-h-0 flex-1 border-t border-white/10">
+          <CoverPhoto src={photos.randomSelf} alt="You on a random call" fit="cover" sizes="50vw" />
+          <p className="absolute left-4 top-4 text-[11px] uppercase tracking-[0.2em] text-white/80">You</p>
+        </div>
+        <div className="flex h-14 shrink-0 items-center justify-center gap-2 bg-black/60">
+          {[MicOff, Camera, UserPlus, MessageCircle, SkipForward, Flag].map((Icon, i) => (
+            <span key={i} className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white">
+              <Icon className="h-4 w-4" />
+            </span>
+          ))}
+        </div>
       </div>
-      <div className="flex h-14 shrink-0 items-center justify-center gap-2 bg-black/60">
-        {[MicOff, Camera, UserPlus, MessageCircle, SkipForward, Flag].map((Icon, i) => (
-          <span key={i} className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white">
-            <Icon className="h-4 w-4" />
-          </span>
-        ))}
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -112,15 +103,10 @@ export function LandingPage({
   return (
     <div id="home" className="lg:snap-y lg:snap-proximity">
       <section className="scroll-mt-16 lg:grid lg:h-[calc(100svh-4rem)] lg:min-h-[36rem] lg:grid-cols-2 lg:overflow-hidden lg:snap-start">
-        <div className="relative lg:order-2">
-          <PanePhoto hero>
-            <div className="absolute inset-0 lg:hidden">
-              <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="contain" sizes="100vw" priority />
-            </div>
-            <div className="absolute inset-0 hidden lg:block">
-              <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="contain" sizes="50vw" priority />
-            </div>
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent p-4 lg:hidden">
+        <div className="relative lg:order-2 lg:h-full">
+          <div className="relative lg:hidden">
+            <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="natural" sizes="100vw" priority />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-950 via-ink-950/50 to-transparent p-4">
               <div className="flex gap-3">
                 <a href="/signup" className="btn-primary flex-1 text-center">
                   Sign up
@@ -130,7 +116,10 @@ export function LandingPage({
                 </a>
               </div>
             </div>
-          </PanePhoto>
+          </div>
+          <div className="relative hidden h-full lg:block">
+            <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
+          </div>
         </div>
         <div className="flex flex-col justify-center px-5 py-10 sm:px-8 lg:order-1 lg:overflow-y-auto lg:px-16">
           <Reveal>
@@ -330,18 +319,34 @@ export function LandingPage({
         </Reveal>
       </section>
 
-      <section className="relative min-h-[28rem] lg:h-[calc(100svh-4rem)] lg:snap-start">
-        <CoverPhoto src={photos.extra} alt="Ready to join VIDLIX" fit="contain" sizes="100vw" />
-        <div className="absolute inset-0 bg-ink-950/60" />
-        <div className="absolute inset-0 flex flex-col items-start justify-end p-6 sm:p-12 lg:justify-center lg:px-16">
-          <h2 className="font-heading text-3xl font-semibold text-white xl:text-5xl">Ready when you are.</h2>
-          <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80">
-            Create an account with email. Confirm you are 18+. Start with Random or Live. Dating stays
-            off until you turn it on.
-          </p>
-          <a href="/signup" className="btn-primary mt-6">
-            Create account
-          </a>
+      <section className="relative lg:snap-start">
+        <div className="relative lg:hidden">
+          <CoverPhoto src={photos.extra} alt="Ready to join VIDLIX" fit="natural" sizes="100vw" />
+          <div className="absolute inset-0 bg-ink-950/55" />
+          <div className="absolute inset-0 flex flex-col items-start justify-end p-6">
+            <h2 className="font-heading text-3xl font-semibold text-white">Ready when you are.</h2>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80">
+              Create an account with email. Confirm you are 18+. Start with Random or Live. Dating stays
+              off until you turn it on.
+            </p>
+            <a href="/signup" className="btn-primary mt-6">
+              Create account
+            </a>
+          </div>
+        </div>
+        <div className="relative hidden min-h-[28rem] lg:block lg:h-[calc(100svh-4rem)]">
+          <CoverPhoto src={photos.extra} alt="Ready to join VIDLIX" fit="cover" sizes="100vw" />
+          <div className="absolute inset-0 bg-ink-950/55" />
+          <div className="absolute inset-0 flex flex-col items-start justify-center px-16">
+            <h2 className="font-heading text-3xl font-semibold text-white xl:text-5xl">Ready when you are.</h2>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80">
+              Create an account with email. Confirm you are 18+. Start with Random or Live. Dating stays
+              off until you turn it on.
+            </p>
+            <a href="/signup" className="btn-primary mt-6">
+              Create account
+            </a>
+          </div>
         </div>
       </section>
     </div>
