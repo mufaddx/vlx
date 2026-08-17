@@ -1,0 +1,625 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  email              String?  @unique
+  phone              String?  @unique
+  username           String   @unique
+  firstName          String
+  lastName           String
+  dateOfBirth        DateTime
+  gender             String
+  status             String   @default("active")
+  role               String   @default("user")
+  emailVerifiedAt    DateTime?
+  phoneVerifiedAt    DateTime?
+  termsAcceptedAt    DateTime?
+  privacyAcceptedAt  DateTime?
+  guidelinesAcceptedAt DateTime?
+  datingOptIn        String   @default("later")
+  coinBalance        Int      @default(0)
+  lastSeenAt         DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  profile              Profile?
+  privacy              UserPrivacy?
+  preferences          UserPreference?
+  sessions             Session[]
+  datingProfile        DatingProfile?
+  followsFrom          Follow[]            @relation("FollowFrom")
+  followsTo            Follow[]            @relation("FollowTo")
+  followRequestsFrom   FollowRequest[]     @relation("FollowRequestFrom")
+  followRequestsTo     FollowRequest[]     @relation("FollowRequestTo")
+  connectionsA         Connection[]        @relation("ConnectionA")
+  connectionsB         Connection[]        @relation("ConnectionB")
+  blocksFrom           Block[]             @relation("BlockFrom")
+  blocksTo             Block[]             @relation("BlockTo")
+  reportsFrom          Report[]            @relation("ReportFrom")
+  reportsTo            Report[]            @relation("ReportTo")
+  messagesA        Message[]           @relation("MessageSender")
+  messagesRecv     Message[]           @relation("MessageReceiver")
+  notifications    Notification[]
+  videoSessionsA       VideoSession[]      @relation("VideoUserA")
+  videoSessionsB       VideoSession[]      @relation("VideoUserB")
+  liveStreamsHosted    LiveStream[]        @relation("LiveHost")
+  liveParticipations   LiveParticipant[]
+  liveJoinRequests     LiveJoinRequest[]
+  liveMessages         LiveMessage[]
+  subscriptions        Subscription[]
+  sponsoredGiven       SponsoredConnection[] @relation("SponsorGiver")
+  sponsoredReceived    SponsoredConnection[] @relation("SponsorReceiver")
+  payments             Payment[]
+  giftsSent            GiftTransaction[]   @relation("GiftSender")
+  giftsReceived        GiftTransaction[]   @relation("GiftReceiver")
+  creatorEarnings      CreatorEarning?
+  kyc                  KycProfile?
+  withdrawals          WithdrawalRequest[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([username])
+}
+
+model Profile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio           String   @default("") @db.Text
+  photoKey      String?  @db.VarChar(500)
+  photoUrl      String?  @db.VarChar(1000)
+  photoMime     String?
+  photoBytes    Int?
+  followersCount Int     @default(0)
+  followingCount Int     @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model UserPrivacy {
+  id                 String  @id @default(cuid())
+  userId             String  @unique
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileVisibility  String  @default("public")
+  whoCanFollow       String  @default("everyone")
+  whoCanMessage      String  @default("connections")
+  whoCanCall         String  @default("connections")
+  datingVisibility   String  @default("hidden")
+  showOnlineStatus   Boolean @default(true)
+  hideUsernameRandom Boolean @default(true)
+}
+
+model UserPreference {
+  id               String  @id @default(cuid())
+  userId           String  @unique
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme            String  @default("system")
+  language         String  @default("en")
+  notifyFollow     Boolean @default(true)
+  notifyMessage    Boolean @default(true)
+  notifyLive       Boolean @default(true)
+  notifyDating     Boolean @default(true)
+  notifyMarketing  Boolean @default(false)
+}
+
+model OtpVerification {
+  id         String    @id @default(cuid())
+  identifier String
+  channel    String
+  codeHash   String
+  purpose    String
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  ipAddress  String?
+  createdAt  DateTime  @default(now())
+
+  @@index([identifier, purpose])
+  @@index([expiresAt])
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique
+  userAgent  String?  @db.Text
+  ipAddress  String?
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model DatingProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio             String   @default("") @db.Text
+  intention       String   @default("")
+  locationLabel   String   @default("")
+  active          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  photos          DatingPhoto[]
+  preferences     DatingPreference?
+}
+
+model DatingPhoto {
+  id              String        @id @default(cuid())
+  datingProfileId String
+  datingProfile   DatingProfile @relation(fields: [datingProfileId], references: [id], onDelete: Cascade)
+  objectKey       String
+  url             String
+  mime            String
+  bytes           Int
+  sortOrder       Int           @default(0)
+  isMain          Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+
+  @@index([datingProfileId, sortOrder])
+}
+
+model DatingPreference {
+  id              String        @id @default(cuid())
+  datingProfileId String        @unique
+  datingProfile   DatingProfile @relation(fields: [datingProfileId], references: [id], onDelete: Cascade)
+  interestedIn    String        @default("everyone")
+  minAge          Int           @default(18)
+  maxAge          Int           @default(99)
+  interestsJson   String        @default("[]") @db.Text
+}
+
+model Follow {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  fromUser   User     @relation("FollowFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User     @relation("FollowTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([fromUserId, toUserId])
+  @@index([toUserId])
+}
+
+model FollowRequest {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  fromUser   User     @relation("FollowRequestFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User     @relation("FollowRequestTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  status     String   @default("pending")
+  maskedName String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([fromUserId, toUserId])
+  @@index([toUserId, status])
+  @@index([fromUserId, status])
+}
+
+model Connection {
+  id         String   @id @default(cuid())
+  userAId    String
+  userBId    String
+  userA      User     @relation("ConnectionA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB      User     @relation("ConnectionB", fields: [userBId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  messages   Message[]
+
+  @@unique([userAId, userBId])
+  @@index([userBId])
+}
+
+model Block {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  fromUser   User     @relation("BlockFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User     @relation("BlockTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  @@unique([fromUserId, toUserId])
+  @@index([toUserId])
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  fromUserId   String
+  toUserId     String?
+  fromUser     User     @relation("ReportFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser       User?    @relation("ReportTo", fields: [toUserId], references: [id], onDelete: SetNull)
+  targetType   String
+  targetId     String?
+  reason       String
+  details      String   @default("") @db.Text
+  status       String   @default("open")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([targetType, targetId])
+}
+
+model Message {
+  id           String        @id @default(cuid())
+  senderId     String
+  sender       User          @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId   String
+  receiver     User          @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  connectionId String
+  connection   Connection    @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  body         String   @db.Text
+  createdAt    DateTime      @default(now())
+  reads        MessageRead[]
+
+  @@index([connectionId, createdAt])
+  @@index([receiverId, createdAt])
+}
+
+model TypingState {
+  connectionId String
+  userId       String
+  updatedAt    DateTime @updatedAt
+
+  @@id([connectionId, userId])
+}
+
+model MatchQueue {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model DatingSwipe {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  action     String
+  createdAt  DateTime @default(now())
+
+  @@unique([fromUserId, toUserId])
+  @@index([toUserId])
+}
+
+model DatingMatch {
+  id        String   @id @default(cuid())
+  userAId   String
+  userBId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userAId, userBId])
+}
+
+model MessageRead {
+  id        String   @id @default(cuid())
+  messageId String
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId    String
+  readAt    DateTime @default(now())
+
+  @@unique([messageId, userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String   @db.Text
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model VideoSession {
+  id          String    @id @default(cuid())
+  userAId     String
+  userBId     String
+  userA       User      @relation("VideoUserA", fields: [userAId], references: [id])
+  userB       User      @relation("VideoUserB", fields: [userBId], references: [id])
+  status      String
+  startedAt   DateTime?
+  endedAt     DateTime?
+  durationSec Int?
+  endReason   String?
+  offerSdp    String?   @db.Text
+  answerSdp   String?   @db.Text
+  iceJsonA    String    @default("[]") @db.Text
+  iceJsonB    String    @default("[]") @db.Text
+  roomName    String?
+  createdAt   DateTime  @default(now())
+
+  @@index([status, createdAt])
+  @@index([userAId])
+  @@index([userBId])
+}
+
+model LiveStream {
+  id           String   @id @default(cuid())
+  hostId       String
+  host         User     @relation("LiveHost", fields: [hostId], references: [id], onDelete: Cascade)
+  title        String
+  category     String   @default("general")
+  status       String   @default("live")
+  viewerCount  Int      @default(0)
+  roomName     String?
+  createdAt    DateTime @default(now())
+  endedAt      DateTime?
+  participants LiveParticipant[]
+  joinRequests LiveJoinRequest[]
+  messages     LiveMessage[]
+
+  @@index([status, createdAt])
+}
+
+model LiveParticipant {
+  id        String     @id @default(cuid())
+  streamId  String
+  stream    LiveStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String     @default("viewer")
+  muted     Boolean    @default(false)
+  joinedAt  DateTime   @default(now())
+  leftAt    DateTime?
+
+  @@index([streamId, role])
+  @@unique([streamId, userId])
+}
+
+model LiveJoinRequest {
+  id        String     @id @default(cuid())
+  streamId  String
+  stream    LiveStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    String     @default("pending")
+  createdAt DateTime   @default(now())
+
+  @@unique([streamId, userId])
+}
+
+model LiveMessage {
+  id        String     @id @default(cuid())
+  streamId  String
+  stream    LiveStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  body      String     @db.Text
+  createdAt DateTime   @default(now())
+
+  @@index([streamId, createdAt])
+}
+
+model SubscriptionPlan {
+  id                      String   @id @default(cuid())
+  slug                    String   @unique
+  name                    String
+  priceCents              Int      @default(0)
+  currency                String   @default("USD")
+  durationDays            Int      @default(30)
+  maxSponsoredUsers       Int      @default(0)
+  chatAccess              Boolean  @default(false)
+  videoCallAccess         Boolean  @default(false)
+  randomVideoAccess       Boolean  @default(true)
+  datingAccess            Boolean  @default(false)
+  liveAccess              Boolean  @default(true)
+  usernameVisibility      Boolean  @default(false)
+  freeMessageLimit        Int      @default(10)
+  callLimit               Int?
+  trialDays               Int      @default(0)
+  discountPercent         Int      @default(0)
+  status                  String   @default("active")
+  sortOrder               Int      @default(0)
+  highlight               Boolean  @default(false)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  subscriptions           Subscription[]
+
+  @@index([status, sortOrder])
+}
+
+model Subscription {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId    String
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
+  status    String           @default("active")
+  startsAt  DateTime         @default(now())
+  endsAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, status])
+}
+
+model SponsoredConnection {
+  id           String   @id @default(cuid())
+  sponsorId    String
+  sponsor      User     @relation("SponsorGiver", fields: [sponsorId], references: [id], onDelete: Cascade)
+  recipientId  String
+  recipient    User     @relation("SponsorReceiver", fields: [recipientId], references: [id], onDelete: Cascade)
+  status       String   @default("pending")
+  createdAt    DateTime @default(now())
+  acceptedAt   DateTime?
+
+  @@unique([sponsorId, recipientId])
+  @@index([sponsorId, status])
+  @@index([recipientId, status])
+}
+
+model Payment {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amountCents Int
+  currency  String          @default("USD")
+  status    String
+  provider  String
+  providerRef String?
+  createdAt DateTime        @default(now())
+  events    PaymentEvent[]
+}
+
+model PaymentEvent {
+  id        String   @id @default(cuid())
+  paymentId String
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  type      String
+  payload   String   @default("{}") @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Gift {
+  id          String   @id @default(cuid())
+  name        String
+  coinValue   Int
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  transactions GiftTransaction[]
+}
+
+model GiftTransaction {
+  id         String   @id @default(cuid())
+  giftId     String
+  gift       Gift     @relation(fields: [giftId], references: [id])
+  senderId   String
+  sender     User     @relation("GiftSender", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("GiftReceiver", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model CreatorEarning {
+  id      String @id @default(cuid())
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balanceCents Int @default(0)
+  transactions EarningTransaction[]
+}
+
+model EarningTransaction {
+  id         String         @id @default(cuid())
+  earningId  String
+  earning    CreatorEarning @relation(fields: [earningId], references: [id], onDelete: Cascade)
+  amountCents Int
+  type       String
+  createdAt  DateTime       @default(now())
+}
+
+model KycProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    String   @default("not_started")
+  notes     String   @default("") @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model WithdrawalRequest {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amountCents Int
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  payouts     PayoutTransaction[]
+}
+
+model PayoutTransaction {
+  id          String             @id @default(cuid())
+  withdrawalId String
+  withdrawal  WithdrawalRequest  @relation(fields: [withdrawalId], references: [id], onDelete: Cascade)
+  provider    String
+  status      String
+  createdAt   DateTime           @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  roleId       String
+  role         Role     @relation(fields: [roleId], references: [id])
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  permissions RolePermission[]
+  admins      AdminUser[]
+}
+
+model Permission {
+  id    String           @id @default(cuid())
+  key   String           @unique
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorType  String
+  actorId    String
+  action     String
+  targetType String?
+  targetId   String?
+  metadata   String   @default("{}") @db.Text
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorId])
+}
+
+model CmsPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  excerpt   String   @default("") @db.Text
+  body      String   @db.Text
+  seoTitle  String?
+  seoDescription String? @db.VarChar(300)
+  updatedAt DateTime @updatedAt
+}
+
+model FaqItem {
+  id        String   @id @default(cuid())
+  question  String   @db.Text
+  answer    String   @db.Text
+  sortOrder Int      @default(0)
+  published Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model SystemSetting {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}

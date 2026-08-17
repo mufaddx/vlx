@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+dist
+.env
+.env.local
+*.db
+*.db-journal
+prisma/dev.db
+public/uploads
+.DS_Store
+next-env.d.ts
