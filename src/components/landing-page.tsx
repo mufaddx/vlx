@@ -3,52 +3,47 @@ import { CoverPhoto } from "@/components/cover-photo";
 import { Reveal } from "@/components/reveal";
 import { photos } from "@/lib/marketing-photos";
 
-function Mark({ size = "md" }: { size?: "md" | "lg" }) {
-  const box = size === "lg" ? "h-16 w-16 sm:h-20 sm:w-20" : "h-10 w-10";
-  const inner = size === "lg" ? "h-5 w-5" : "h-3 w-3";
-  const dot = size === "lg" ? "h-3 w-3" : "h-2 w-2";
+function Shell({ children }: { children: React.ReactNode }) {
+  return <div className="mx-auto max-w-7xl px-4 sm:px-6">{children}</div>;
+}
+
+function Card({
+  id,
+  children,
+  className = "",
+}: {
+  id?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section id={id} className="scroll-mt-24">
+      <div
+        className={`rounded-2xl border border-mist-200 bg-white p-5 dark:border-white/10 dark:bg-ink-950 sm:p-8 lg:p-10 ${className}`}
+      >
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function Mark() {
   return (
     <span
-      className={`relative grid shrink-0 place-items-center rounded-full bg-gradient-to-br from-teal to-violet ${box}`}
+      className="relative grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-teal to-violet"
       aria-hidden
     >
-      <span className={`rounded-full bg-ink-950 ${inner}`} />
-      <span className={`absolute right-0.5 top-0.5 rounded-full bg-white ${dot}`} />
+      <span className="h-3 w-3 rounded-full bg-ink-950" />
+      <span className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-white" />
     </span>
   );
 }
 
 function Kicker({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-violet-deep dark:text-teal">
+    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-violet-deep dark:text-teal">
       {children}
     </p>
-  );
-}
-
-function Block({
-  id,
-  kicker,
-  title,
-  children,
-}: {
-  id?: string;
-  kicker: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="scroll-mt-24 border-t border-mist-200/70 dark:border-white/10">
-      <div className="mx-auto grid max-w-5xl gap-8 px-6 py-16 sm:px-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 lg:py-24">
-        <Reveal>
-          <Kicker>{kicker}</Kicker>
-          <h2 className="mt-4 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
-        </Reveal>
-        <Reveal delayMs={80} className="space-y-4 text-[15px] leading-relaxed text-mist-600 dark:text-mist-300 sm:text-base">
-          {children}
-        </Reveal>
-      </div>
-    </section>
   );
 }
 
@@ -60,165 +55,370 @@ export function LandingPage({
   faqs: FaqItem[];
 }) {
   const shortFaqs = faqs.slice(0, 6);
+
   return (
-    <div id="home">
-      <section className="lg:grid lg:min-h-[calc(100svh-4rem)] lg:grid-cols-2">
-        <div className="relative lg:order-2 lg:min-h-[calc(100svh-4rem)]">
-          <div className="relative lg:hidden">
-            <CoverPhoto src={photos.heroMobile} alt="VIDLIX video call" fit="natural" sizes="100vw" priority />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-950/80 to-transparent p-4">
-              <div className="flex gap-3">
-                <a href="/signup" className="btn-primary flex-1 text-center">
-                  Sign up
+    <div id="home" className="space-y-5 pb-16 pt-5 sm:space-y-6 sm:pt-6 lg:space-y-8 lg:pb-24 lg:pt-8">
+      <Shell>
+        <Card>
+          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+            <Reveal className="order-2 lg:order-1">
+              <div className="flex items-center gap-3">
+                <Mark />
+                <Kicker>Privacy-first video</Kicker>
+              </div>
+              <h1 className="mt-5 font-heading text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">
+                Meet.
+                <br />
+                Connect.
+                <br />
+                Discover.
+              </h1>
+              <div className="mt-5 h-px w-16 bg-ink-900/15 dark:bg-white/15" />
+              <p className="mt-5 text-[15px] leading-relaxed text-mist-600 dark:text-mist-300 sm:text-base">
+                Anonymous random video, live rooms, optional dating, and private chat — on the web.
+                Sign in with email OTP. No password. You must be 18+.
+              </p>
+              <p className="mt-3 text-[15px] leading-relaxed text-mist-500">
+                Random matches never see your username, email, or phone. VIDLIX does not record those
+                calls. Dating stays off until you turn it on.
+              </p>
+              <div className="mt-7 hidden flex-wrap gap-3 lg:flex">
+                <a href="/signup" className="btn-primary">
+                  Get started
                 </a>
-                <a href="/login" className="btn-secondary flex-1 text-center">
-                  Sign in
+                <a href="/#how" className="btn-secondary">
+                  How it works
                 </a>
+              </div>
+              <div className="mt-7 flex flex-col gap-3 lg:hidden">
+                <div className="flex gap-3">
+                  <a href="/signup" className="btn-primary flex-1 text-center">
+                    Sign up
+                  </a>
+                  <a href="/login" className="btn-secondary flex-1 text-center">
+                    Sign in
+                  </a>
+                </div>
+                <a href="/#how" className="btn-ghost w-full text-center">
+                  How it works
+                </a>
+              </div>
+            </Reveal>
+            <div className="relative order-1 aspect-video overflow-hidden rounded-xl bg-mist-100 dark:bg-ink-900 lg:order-2">
+              <div className="absolute inset-0 lg:hidden">
+                <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="cover" sizes="100vw" priority />
+              </div>
+              <div className="absolute inset-0 hidden lg:block">
+                <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
               </div>
             </div>
           </div>
-          <div className="relative hidden h-full min-h-[calc(100svh-4rem)] lg:block">
-            <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
-          </div>
-        </div>
+        </Card>
+      </Shell>
 
-        <div className="flex flex-col justify-center px-6 py-12 sm:px-10 lg:order-1 lg:px-16 lg:py-16">
+      <Shell>
+        <Card id="random">
           <Reveal>
-            <div className="flex items-center gap-3">
-              <Mark />
-              <Kicker>Privacy-first video</Kicker>
-            </div>
-            <h1 className="mt-6 font-heading text-[2.75rem] font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              Meet.
-              <br />
-              Connect.
-              <br />
-              Discover.
-            </h1>
-            <div className="mt-6 h-px w-24 bg-ink-900/20 dark:bg-white/20" />
-            <p className="mt-6 max-w-md text-base leading-relaxed text-mist-600 dark:text-mist-300">
-              Anonymous random video, live rooms, optional dating, and private chat — on the web. Email
-              OTP only. 18+.
+            <Kicker>Random Video</Kicker>
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Meet someone new. Stay anonymous.
+            </h2>
+            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+              Random Video is a live 50/50 camera match with a stranger. It is built so a conversation
+              can happen without turning into a profile hunt. During the call the other person does not
+              see your username, email, or phone.
             </p>
-            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-mist-500">
-              Random matches never see your username, email, or phone. Calls are not recorded. Dating
-              stays off until you turn it on.
-            </p>
-            <div className="mt-8 hidden gap-3 lg:flex">
-              <a href="/signup" className="btn-primary">
-                Get started
-              </a>
-              <a href="/#how" className="btn-secondary">
-                How it works
-              </a>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {[
+                {
+                  t: "No identity on the call",
+                  d: "You appear as a face and a voice, not as an account. If you want to stay known later, you send a follow request after you hang up.",
+                },
+                {
+                  t: "You stay in control",
+                  d: "Mute, hide camera, skip to the next person, open a short in-call chat, report, or block. Skipping is how you keep the room comfortable.",
+                },
+                {
+                  t: "No recording",
+                  d: "VIDLIX does not store random-call video or audio. Recording or restreaming someone else’s random call is against the rules.",
+                },
+                {
+                  t: "Not a dating queue",
+                  d: "Matching is random. It is not Dating unless you later opt into Dating. Treat every call as a first meeting.",
+                },
+              ].map((x) => (
+                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                  <h3 className="font-heading text-base font-semibold">{x.t}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
+                </div>
+              ))}
             </div>
           </Reveal>
-        </div>
-      </section>
+        </Card>
+      </Shell>
 
-      <Block id="random" kicker="Random Video" title="Meet someone new. Stay anonymous.">
-        <p>
-          A live 50/50 camera match. The other person does not see your username, email, or phone.
-          Mute, skip, report, or block. Follow only if you both want to stay in touch after.
-        </p>
-        <p>VIDLIX does not store random-call video or audio. This is not Dating unless you opt in later.</p>
-      </Block>
+      <Shell>
+        <Card id="live">
+          <Reveal>
+            <Kicker>Live</Kicker>
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Watch. Join. Go live.
+            </h2>
+            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+              Live is a room with a host, not a random 1:1. You can sit as a viewer, read chat, and
+              request to come on camera. Hosts decide who is on video. Rooms stay small on purpose.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  t: "Viewers first",
+                  d: "Open a room, watch the host, and use chat. You are not automatically put on camera.",
+                },
+                {
+                  t: "Up to 10 on video",
+                  d: "The cap keeps rooms watchable. The host can mute, remove someone from video, or end the room.",
+                },
+                {
+                  t: "Host control",
+                  d: "Create a room, share it, accept or decline join requests. You are responsible for who appears on camera.",
+                },
+              ].map((x) => (
+                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                  <h3 className="font-heading text-base font-semibold">{x.t}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </Card>
+      </Shell>
 
-      <Block id="live" kicker="Live" title="Watch. Join. Go live.">
-        <p>
-          Sit as a viewer, use room chat, and request to come on camera. Hosts accept or decline. Up to
-          10 people on video. Hosts can mute, remove, or end the room.
-        </p>
-      </Block>
+      <Shell>
+        <Card id="dating">
+          <Reveal>
+            <Kicker>Dating · optional</Kicker>
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Only if you want it.
+            </h2>
+            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+              Dating on VIDLIX is a separate layer. Creating an account does not put you in the dating
+              pool. You choose photos, a bio, and whether you are looking — and you can turn it off.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  t: "18+ by date of birth",
+                  d: "Age is checked from the date of birth you give at signup. There is no face scan. If Dating is not for you, leave it off.",
+                },
+                {
+                  t: "Like or Pass, then match",
+                  d: "Browse profiles: photos, bio, Like or Pass. A match is two-sided. Dating is not a back door into someone’s random-call identity.",
+                },
+                {
+                  t: "Match to conversation",
+                  d: "When you both like, you can move to chat. Plans may change limits. Those entitlements live in Admin.",
+                },
+              ].map((x) => (
+                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                  <h3 className="font-heading text-base font-semibold">{x.t}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </Card>
+      </Shell>
 
-      <Block id="dating" kicker="Dating · optional" title="Only if you want it.">
-        <p>
-          Creating an account does not put you in the dating pool. Age is date of birth, not a face
-          scan. Like or Pass, match two-sided, then chat. Turn it off anytime.
-        </p>
-      </Block>
+      <Shell>
+        <Card id="features">
+          <Reveal>
+            <Kicker>Requests & connections</Kicker>
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Follow after the call — on your terms.
+            </h2>
+            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+              A good random call should not force a public friendship. A follow request is how you ask
+              to stay in touch. The other person accepts, ignores, or blocks. Nothing is automatic.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  t: "Send a request",
+                  d: "After Random Video you can send a follow request. They see a limited view of who you are until they accept.",
+                },
+                {
+                  t: "If they accept",
+                  d: "Username visibility, chat, and — depending on plan — private video can open. Free and paid plans define those gates in Admin.",
+                },
+                {
+                  t: "If they decline",
+                  d: "The anonymous call stays anonymous. You can still block or report. A follow is not a permanent contract.",
+                },
+              ].map((x) => (
+                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                  <h3 className="font-heading text-base font-semibold">{x.t}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </Card>
+      </Shell>
 
-      <Block id="features" kicker="Connections" title="Follow after the call.">
-        <p>
-          Request with limited identity. They accept, ignore, or block. An accepted connection can open
-          username, chat, and — depending on plan — private video. Block and report still work.
-        </p>
-      </Block>
+      <Shell>
+        <Card id="chat">
+          <Reveal>
+            <Kicker>Chat</Kicker>
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Keep talking after you hang up.
+            </h2>
+            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+              Chat is for people who already chose each other — a match, an accepted follow, or a
+              conversation you both want to continue. It is not a broadcast wall and not a way to hunt
+              strangers who skipped you.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  t: "Both people must want the thread",
+                  d: "If someone does not accept a connection, they should not be reachable in chat just because you shared a random call.",
+                },
+                {
+                  t: "What you can send",
+                  d: "Text first. Plans can add richer chat, more free messages, or starting a private video from the thread. Limits exist so spam does not take over inboxes.",
+                },
+                {
+                  t: "Safety in the inbox",
+                  d: "Report a conversation, block the other person, and leave. Treat links and money requests with the same caution you would anywhere on the web.",
+                },
+              ].map((x) => (
+                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                  <h3 className="font-heading text-base font-semibold">{x.t}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </Card>
+      </Shell>
 
-      <Block id="chat" kicker="Chat" title="Keep talking after you hang up.">
-        <p>
-          Private threads are for people who already chose each other. Chat is not a wall and not a way
-          to hunt someone who skipped you.
-        </p>
-      </Block>
-
-      <section id="how" className="scroll-mt-24 border-t border-mist-200/70 dark:border-white/10">
-        <div className="mx-auto max-w-5xl px-6 py-16 sm:px-8 lg:py-24">
+      <Shell>
+        <Card id="how">
           <Reveal>
             <Kicker>How it works</Kicker>
-            <h2 className="mt-4 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">Four steps.</h2>
-            <ol className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Four clear steps.</h2>
+            <ol className="mt-8 grid gap-4 sm:grid-cols-2">
               {[
-                "Email OTP and an 18+ profile. Camera is not requested at signup.",
-                "Choose Random, Live, or Dating. Dating stays off until you opt in.",
-                "Skip, watch, Like, or send a follow. Nothing is automatic.",
-                "Chat when you both want. Block, report, or leave at any time.",
-              ].map((d, i) => (
-                <li key={d}>
-                  <p className="font-heading text-sm tracking-[0.2em] text-mist-400">0{i + 1}</p>
-                  <p className="mt-3 text-[15px] leading-relaxed">{d}</p>
+                {
+                  n: "01",
+                  t: "Email OTP and an 18+ profile",
+                  d: "Enter your email, receive a one-time code, then set a name, username, date of birth, and agree to Terms, Privacy, and Guidelines. Camera is not requested during signup.",
+                },
+                {
+                  n: "02",
+                  t: "Choose Random, Live, or Dating",
+                  d: "Jump into an anonymous 50/50 call, watch or host a live room, or opt into Dating. Nothing except the account itself is required to try Random Video.",
+                },
+                {
+                  n: "03",
+                  t: "Match, watch, or send a request",
+                  d: "Skip until the call feels right, request to join a live host, or Like a dating profile. Follow requests after Random stay limited until the other person accepts.",
+                },
+                {
+                  n: "04",
+                  t: "Chat when you both want",
+                  d: "Private chat and further video are for people who already chose each other. Block, report, or leave at any time. Plans can expand limits; they do not remove safety tools.",
+                },
+              ].map((s) => (
+                <li key={s.n} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                  <p className="text-xs tracking-[0.18em] text-mist-400">{s.n}</p>
+                  <p className="mt-2 font-heading text-lg font-semibold">{s.t}</p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{s.d}</p>
                 </li>
               ))}
             </ol>
           </Reveal>
-        </div>
-      </section>
+        </Card>
+      </Shell>
 
-      <section id="pricing" className="scroll-mt-24 border-t border-mist-200/70 dark:border-white/10">
-        <div className="mx-auto max-w-5xl px-6 py-16 sm:px-8 lg:py-24">
+      <Shell>
+        <Card id="pricing">
           <Reveal>
             <Kicker>Plans</Kicker>
-            <h2 className="mt-4 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">Pick how you use VIDLIX.</h2>
-            <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-mist-500">
-              Free is enough to try. Paid plans can open more chat, private video, dating tools, or live
-              features. Prices live in Admin.
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Pick a plan that matches how you use VIDLIX.
+            </h2>
+            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+              Free is enough to try. Paid plans can open more chat, private video, dating tools, live
+              features, or sponsored connections. Prices and perks are set in Admin — not frozen in this
+              page.
             </p>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {plans.map((p) => (
-                <div key={p.id}>
+                <div
+                  key={p.id}
+                  className={`rounded-xl border border-mist-200 p-5 dark:border-white/10 ${p.highlight ? "ring-1 ring-violet" : ""}`}
+                >
                   <p className="text-sm text-mist-500">{p.name}</p>
-                  <p className="mt-1 font-heading text-2xl font-semibold">
+                  <p className="mt-2 font-heading text-2xl font-semibold">
                     {p.priceCents === 0 ? "Free" : `$${(p.priceCents / 100).toFixed(0)}`}
                   </p>
                 </div>
               ))}
             </div>
           </Reveal>
-        </div>
-      </section>
+        </Card>
+      </Shell>
 
-      <Block id="safety" kicker="Safety" title="Block. Report. Leave.">
-        <p>
-          End any interaction immediately. We do not record random calls as a product feature. We do
-          not put you in Dating without a clear opt-in.
-        </p>
-        <p>
-          <a href="/safety" className="font-medium underline underline-offset-4">
-            Safety Center
-          </a>
-        </p>
-      </Block>
+      <Shell>
+        <Card id="safety">
+          <Reveal>
+            <Kicker>Safety</Kicker>
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Block. Report. Leave.
+            </h2>
+            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+              Every live surface — Random, Live, Dating, Chat — is built so you can end the interaction
+              immediately and tell us what went wrong.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  t: "In the moment",
+                  d: "Leave the call, skip, mute, hide your camera, or end the live room. You do not owe anyone extra time.",
+                },
+                {
+                  t: "After the moment",
+                  d: "Block so they cannot reach you the same way. Report with context. We may warn, suspend, or ban accounts that break the rules.",
+                },
+                {
+                  t: "What we will not do",
+                  d: "We will not promise every stranger is kind. We will not record random calls as a product feature. We will not put you in Dating without opt-in.",
+                },
+              ].map((x) => (
+                <div key={x.t} className="rounded-xl border border-mist-200 p-5 dark:border-white/10">
+                  <h3 className="font-heading text-base font-semibold">{x.t}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
+                </div>
+              ))}
+            </div>
+            <a href="/safety" className="btn-primary mt-8">
+              Safety Center
+            </a>
+          </Reveal>
+        </Card>
+      </Shell>
 
-      <section id="faq" className="scroll-mt-24 border-t border-mist-200/70 dark:border-white/10">
-        <div className="mx-auto max-w-3xl px-6 py-16 sm:px-8 lg:py-24">
+      <Shell>
+        <Card id="faq">
           <Reveal>
             <Kicker>FAQ</Kicker>
-            <h2 className="mt-4 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">Straight answers.</h2>
-            <div className="mt-10 divide-y divide-mist-200 border-y border-mist-200 dark:divide-white/10 dark:border-white/10">
+            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Straight answers.</h2>
+            <div className="mt-8 divide-y divide-mist-200 border-y border-mist-200 dark:divide-white/10 dark:border-white/10">
               {shortFaqs.map((f) => (
                 <details key={f.id} className="py-4">
                   <summary className="cursor-pointer font-medium">{f.question}</summary>
-                  <p className="mt-3 text-[15px] leading-relaxed text-mist-500">{f.answer}</p>
+                  <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mist-500">{f.answer}</p>
                 </details>
               ))}
             </div>
@@ -226,25 +426,26 @@ export function LandingPage({
               More in Help Center
             </a>
           </Reveal>
-        </div>
-      </section>
+        </Card>
+      </Shell>
 
-      <section className="border-t border-mist-200/70 px-6 py-20 dark:border-white/10 sm:px-8">
-        <Reveal className="mx-auto max-w-5xl">
-          <div className="flex items-center gap-3">
-            <Mark size="lg" />
-            <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-5xl">Ready when you are.</h2>
-          </div>
-          <div className="mt-6 h-px w-24 bg-ink-900/20 dark:bg-white/20" />
-          <p className="mt-6 max-w-md text-[15px] leading-relaxed text-mist-500">
-            Create an account with email. Confirm you are 18+. Start with Random or Live. Dating stays
-            off until you turn it on.
-          </p>
-          <a href="/signup" className="btn-primary mt-8">
-            Create account
-          </a>
-        </Reveal>
-      </section>
+      <Shell>
+        <Card>
+          <Reveal>
+            <div className="flex items-center gap-3">
+              <Mark />
+              <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Ready when you are.</h2>
+            </div>
+            <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-mist-500">
+              Create an account with email, confirm you are 18+, and start with Random Video or a live
+              room. Dating stays off until you turn it on.
+            </p>
+            <a href="/signup" className="btn-primary mt-6">
+              Create account
+            </a>
+          </Reveal>
+        </Card>
+      </Shell>
     </div>
   );
 }
