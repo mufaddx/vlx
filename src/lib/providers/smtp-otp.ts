@@ -1,3 +1,4 @@
+import nodemailer from "nodemailer";
 import type { OtpProvider } from "./types";
 
 function env(name: string) {
@@ -6,14 +7,6 @@ function env(name: string) {
 
 export function smtpConfigured() {
   return Boolean(env("SMTP_USER") && env("SMTP_PASS"));
-}
-
-function isConnectError(err: unknown) {
-  const code =
-    typeof err === "object" && err && "code" in err ? String((err as { code?: unknown }).code) : "";
-  return ["ESOCKET", "ECONNECTION", "ETIMEDOUT", "ECONNREFUSED", "EDNS", "EAI_AGAIN", "ETLS"].includes(
-    code,
-  );
 }
 
 export class SmtpOtpProvider implements OtpProvider {
@@ -29,8 +22,6 @@ export class SmtpOtpProvider implements OtpProvider {
     if (!user || !pass) {
       throw new Error("SMTP is not configured");
     }
-    const mailerMod = await import("nodemailer");
-    const nodemailer = mailerMod.default ?? mailerMod;
     const host = env("SMTP_HOST") || "smtp.hostinger.com";
     const preferred = Number(env("SMTP_PORT") || "465") || 465;
     const from = env("SMTP_FROM") || `VIDLIX <${user}>`;
@@ -48,30 +39,22 @@ export class SmtpOtpProvider implements OtpProvider {
         host,
         port,
         secure: port === 465,
-        requireTLS: port === 587,
-        family: 4,
+        auth: { user, pass },
         connectionTimeout: 12_000,
         greetingTimeout: 12_000,
         socketTimeout: 20_000,
-        auth: { user, pass },
-        tls: { minVersion: "TLSv1.2" },
       });
       await transporter.sendMail(payload);
     };
 
     try {
       await sendOn(preferred);
-    } catch (err) {
-      if (preferred !== 587) {
-        try {
-          await sendOn(587);
-          return;
-        } catch (retryErr) {
-          if (isConnectError(retryErr)) throw retryErr;
-          throw retryErr;
-        }
+    } catch {
+      if (preferred === 587) {
+        await sendOn(465);
+        return;
       }
-      throw err;
+      await sendOn(587);
     }
   }
 }

@@ -44,7 +44,7 @@ export async function performSendOtp(formData: FormData) {
     const purpose = purposeParsed.data;
     const hdrs = await headers();
     const ip = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-    const limited = rateLimit(`otp:${identifier}:${ip}`, 5, 10 * 60 * 1000);
+    const limited = rateLimit(`otp:${identifier}:${ip}`, 20, 10 * 60 * 1000);
     if (!limited.ok) {
       return { error: "Too many OTP requests. Try again later." };
     }

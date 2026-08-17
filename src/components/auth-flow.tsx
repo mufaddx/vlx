@@ -8,7 +8,14 @@ type JsonResult = { error?: string; hint?: string; next?: string; ok?: boolean; 
 async function postForm(url: string, fd: FormData): Promise<JsonResult> {
   const res = await fetch(url, { method: "POST", body: fd, credentials: "same-origin" });
   const data = (await res.json().catch(() => null)) as JsonResult | null;
-  if (!data) return { error: "Could not reach the server. Try again." };
+  if (!data) {
+    return {
+      error:
+        res.status === 404
+          ? "OTP service is missing on the server. Wait for the latest deploy, then try again."
+          : "Could not reach the server. Try again.",
+    };
+  }
   return data;
 }
 

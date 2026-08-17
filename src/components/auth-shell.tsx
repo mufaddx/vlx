@@ -12,7 +12,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link href="/" className="btn-ghost text-sm">
-            Back
+            Home
           </Link>
         </div>
       </header>
