@@ -19,6 +19,7 @@ export function CoverPhoto({
       alt={alt}
       className={`relative block h-auto w-full ${className}`}
       fetchPriority={priority ? "high" : "auto"}
+      decoding="async"
     />
   );
 }
