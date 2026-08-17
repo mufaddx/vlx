@@ -18,7 +18,7 @@ export function publicSendError(err: unknown) {
     return "Database tables are missing. On the server run: npx prisma db push";
   }
   if (code === "EAUTH" || /invalid login|authentication failed|535/i.test(msg)) {
-    return "Email login failed. Check SMTP_USER and SMTP_PASS (mailbox app password) on Hostinger.";
+    return "Hostinger rejected the mailbox password. In Emails → Email accounts, reset the password for noreply@vidlix.in, paste that same password into SMTP_PASS (no quotes), save, then Rebuild the Node app.";
   }
   if (
     ["ESOCKET", "ECONNECTION", "ETIMEDOUT", "ECONNREFUSED", "EDNS", "EAI_AGAIN", "ETLS"].includes(code) ||

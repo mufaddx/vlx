@@ -1,12 +1,8 @@
-import Image from "next/image";
-
 export function CoverPhoto({
   src,
   alt,
   className = "",
-  sizes = "(max-width: 1024px) 100vw, 50vw",
   priority = false,
-  fit = "cover",
 }: {
   src: string;
   alt: string;
@@ -15,27 +11,14 @@ export function CoverPhoto({
   priority?: boolean;
   fit?: "cover" | "contain" | "natural";
 }) {
-  if (fit === "natural") {
-    return (
-      <Image
-        src={src}
-        alt={alt}
-        width={1080}
-        height={1350}
-        className={`h-auto w-full ${className}`}
-        sizes={sizes}
-        priority={priority}
-      />
-    );
-  }
   return (
-    <Image
+    // Native img only — next/image `fill` was covering login/signup during navigation.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={src}
       alt={alt}
-      fill
-      className={`${fit === "contain" ? "object-contain object-center" : "object-cover object-center"} ${className}`}
-      sizes={sizes}
-      priority={priority}
+      className={`relative block h-auto w-full ${className}`}
+      fetchPriority={priority ? "high" : "auto"}
     />
   );
 }

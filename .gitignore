@@ -4,6 +4,7 @@ out
 dist
 .env
 .env.local
+hostinger.env
 *.db
 *.db-journal
 prisma/dev.db

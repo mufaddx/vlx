@@ -31,7 +31,6 @@ export const metadata: Metadata = {
       "Private random video, live, optional dating, and sponsored premium connections. Random means random.",
     type: "website",
     siteName: "VIDLIX",
-    images: [{ url: "/marketing/01.png", width: 1200, height: 630, alt: "VIDLIX" }],
   },
   robots: { index: true, follow: true },
   icons: { icon: "/icon.svg", apple: "/icon.svg" },

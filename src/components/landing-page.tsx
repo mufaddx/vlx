@@ -72,7 +72,7 @@ export function LandingPage({ faqs }: { faqs: FaqItem[] }) {
                 Meet. Connect. Discover.
               </h1>
               <div className="-mx-4 mt-3 lg:hidden">
-                <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="natural" sizes="100vw" priority />
+                  <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" priority />
               </div>
               <div className="mt-5 hidden h-px w-16 bg-ink-900/15 dark:bg-white/15 lg:block" />
               <Box className="mt-4">
@@ -94,9 +94,9 @@ export function LandingPage({ faqs }: { faqs: FaqItem[] }) {
                 </a>
               </div>
             </Reveal>
-            <div className="relative hidden aspect-video overflow-hidden rounded-xl bg-mist-100 dark:bg-ink-900 lg:block">
-              <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
-            </div>
+                <div className="relative hidden overflow-hidden rounded-xl bg-mist-100 dark:bg-ink-900 lg:block">
+                  <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" priority />
+                </div>
           </div>
         </Card>
       </Shell>
