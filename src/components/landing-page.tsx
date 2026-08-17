@@ -1,4 +1,4 @@
-import type { FaqItem, SubscriptionPlan } from "@prisma/client";
+import type { FaqItem } from "@prisma/client";
 import { CoverPhoto } from "@/components/cover-photo";
 import { Reveal } from "@/components/reveal";
 import { photos } from "@/lib/marketing-photos";
@@ -19,11 +19,19 @@ function Card({
   return (
     <section id={id} className="scroll-mt-24">
       <div
-        className={`px-4 py-8 lg:rounded-2xl lg:border lg:border-mist-200 lg:bg-white lg:p-10 dark:lg:border-white/10 dark:lg:bg-ink-950 ${className}`}
+        className={`border-y border-mist-200 bg-white px-4 py-6 dark:border-white/10 dark:bg-ink-950 lg:rounded-2xl lg:border lg:p-10 ${className}`}
       >
         {children}
       </div>
     </section>
+  );
+}
+
+function Box({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-xl border border-mist-200 p-4 dark:border-white/10 sm:p-5 ${className}`}>
+      {children}
+    </div>
   );
 }
 
@@ -47,37 +55,36 @@ function Kicker({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function LandingPage({
-  plans,
-  faqs,
-}: {
-  plans: SubscriptionPlan[];
-  faqs: FaqItem[];
-}) {
+export function LandingPage({ faqs }: { faqs: FaqItem[] }) {
   const shortFaqs = faqs.slice(0, 6);
 
   return (
-    <div id="home" className="space-y-0 pb-28 pt-2 lg:space-y-8 lg:pb-24 lg:pt-8">
+    <div id="home" className="space-y-3 pb-28 pt-0 lg:space-y-8 lg:pb-24 lg:pt-8">
       <Shell>
-        <Card>
-          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
-            <Reveal className="order-2 lg:order-1">
+        <Card className="pt-4 lg:pt-10">
+          <div className="grid lg:grid-cols-2 lg:items-center lg:gap-12">
+            <Reveal>
               <div className="flex items-center gap-3">
                 <Mark />
                 <Kicker>Privacy-first video</Kicker>
               </div>
-              <h1 className="mt-5 whitespace-nowrap font-heading text-[clamp(1.05rem,5.2vw,1.75rem)] font-semibold leading-none tracking-tight sm:text-3xl lg:text-5xl">
+              <h1 className="mt-4 whitespace-nowrap font-heading text-[clamp(1.05rem,5.2vw,1.75rem)] font-semibold leading-none tracking-tight sm:text-3xl lg:text-5xl">
                 Meet. Connect. Discover.
               </h1>
-              <div className="mt-5 h-px w-16 bg-ink-900/15 dark:bg-white/15" />
-              <p className="mt-5 text-[15px] leading-relaxed text-mist-600 dark:text-mist-300 sm:text-base">
-                Anonymous random video, live rooms, optional dating, and private chat — on the web.
-                Sign in with email OTP. No password. You must be 18+.
-              </p>
-              <p className="mt-3 text-[15px] leading-relaxed text-mist-500">
-                Random matches never see your username, email, or phone. VIDLIX does not record those
-                calls. Dating stays off until you turn it on.
-              </p>
+              <div className="-mx-4 mt-3 lg:mx-0 lg:mt-6 lg:hidden">
+                <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="natural" sizes="100vw" priority />
+              </div>
+              <div className="mt-5 hidden h-px w-16 bg-ink-900/15 dark:bg-white/15 lg:block" />
+              <Box className="mt-4">
+                <p className="text-[15px] leading-relaxed text-mist-600 dark:text-mist-300 sm:text-base">
+                  Anonymous random video, live rooms, optional dating, and private chat — on the web.
+                  Sign in with email OTP. No password. You must be 18+.
+                </p>
+                <p className="mt-3 text-[15px] leading-relaxed text-mist-500">
+                  Random matches never see your username, email, or phone. VIDLIX does not record those
+                  calls. Dating stays off until you turn it on.
+                </p>
+              </Box>
               <div className="mt-7 hidden flex-wrap gap-3 lg:flex">
                 <a href="/signup" className="btn-primary">
                   Get started
@@ -86,19 +93,9 @@ export function LandingPage({
                   How it works
                 </a>
               </div>
-              <a href="/#how" className="mt-6 inline-block text-sm underline underline-offset-4 lg:hidden">
-                How it works
-              </a>
             </Reveal>
-            <div className="order-1 lg:order-2">
-              <div className="-mx-4 lg:mx-0">
-                <div className="lg:hidden">
-                  <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="natural" sizes="100vw" priority />
-                </div>
-                <div className="relative hidden aspect-video overflow-hidden rounded-xl bg-mist-100 dark:bg-ink-900 lg:block">
-                  <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
-                </div>
-              </div>
+            <div className="relative hidden aspect-video overflow-hidden rounded-xl bg-mist-100 dark:bg-ink-900 lg:block">
+              <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" fit="cover" sizes="50vw" priority />
             </div>
           </div>
         </Card>
@@ -111,12 +108,14 @@ export function LandingPage({
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
               Meet someone new. Stay anonymous.
             </h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
-              Random Video is a live 50/50 camera match with a stranger. It is built so a conversation
-              can happen without turning into a profile hunt. During the call the other person does not
-              see your username, email, or phone.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <Box className="mt-4">
+              <p className="max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+                Random Video is a live 50/50 camera match with a stranger. It is built so a conversation
+                can happen without turning into a profile hunt. During the call the other person does not
+                see your username, email, or phone.
+              </p>
+            </Box>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {[
                 {
                   t: "No identity on the call",
@@ -135,10 +134,10 @@ export function LandingPage({
                   d: "Matching is random. It is not Dating unless you later opt into Dating. Treat every call as a first meeting.",
                 },
               ].map((x) => (
-                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
+                <Box key={x.t}>
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
-                </div>
+                </Box>
               ))}
             </div>
           </Reveal>
@@ -152,11 +151,13 @@ export function LandingPage({
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
               Watch. Join. Go live.
             </h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
-              Live is a room with a host, not a random 1:1. You can sit as a viewer, read chat, and
-              request to come on camera. Hosts decide who is on video. Rooms stay small on purpose.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <Box className="mt-4">
+              <p className="max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+                Live is a room with a host, not a random 1:1. You can sit as a viewer, read chat, and
+                request to come on camera. Hosts decide who is on video. Rooms stay small on purpose.
+              </p>
+            </Box>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {[
                 {
                   t: "Viewers first",
@@ -171,10 +172,10 @@ export function LandingPage({
                   d: "Create a room, share it, accept or decline join requests. You are responsible for who appears on camera.",
                 },
               ].map((x) => (
-                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
+                <Box key={x.t}>
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
-                </div>
+                </Box>
               ))}
             </div>
           </Reveal>
@@ -188,11 +189,13 @@ export function LandingPage({
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
               Only if you want it.
             </h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
-              Dating on VIDLIX is a separate layer. Creating an account does not put you in the dating
-              pool. You choose photos, a bio, and whether you are looking — and you can turn it off.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <Box className="mt-4">
+              <p className="max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+                Dating on VIDLIX is a separate layer. Creating an account does not put you in the dating
+                pool. You choose photos, a bio, and whether you are looking — and you can turn it off.
+              </p>
+            </Box>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {[
                 {
                   t: "18+ by date of birth",
@@ -207,10 +210,10 @@ export function LandingPage({
                   d: "When you both like, you can move to chat. Plans may change limits. Those entitlements live in Admin.",
                 },
               ].map((x) => (
-                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
+                <Box key={x.t}>
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
-                </div>
+                </Box>
               ))}
             </div>
           </Reveal>
@@ -224,11 +227,13 @@ export function LandingPage({
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
               Follow after the call — on your terms.
             </h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
-              A good random call should not force a public friendship. A follow request is how you ask
-              to stay in touch. The other person accepts, ignores, or blocks. Nothing is automatic.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <Box className="mt-4">
+              <p className="max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+                A good random call should not force a public friendship. A follow request is how you ask
+                to stay in touch. The other person accepts, ignores, or blocks. Nothing is automatic.
+              </p>
+            </Box>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {[
                 {
                   t: "Send a request",
@@ -243,10 +248,10 @@ export function LandingPage({
                   d: "The anonymous call stays anonymous. You can still block or report. A follow is not a permanent contract.",
                 },
               ].map((x) => (
-                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
+                <Box key={x.t}>
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
-                </div>
+                </Box>
               ))}
             </div>
           </Reveal>
@@ -260,12 +265,14 @@ export function LandingPage({
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
               Keep talking after you hang up.
             </h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
-              Chat is for people who already chose each other — a match, an accepted follow, or a
-              conversation you both want to continue. It is not a broadcast wall and not a way to hunt
-              strangers who skipped you.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <Box className="mt-4">
+              <p className="max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+                Chat is for people who already chose each other — a match, an accepted follow, or a
+                conversation you both want to continue. It is not a broadcast wall and not a way to hunt
+                strangers who skipped you.
+              </p>
+            </Box>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {[
                 {
                   t: "Both people must want the thread",
@@ -280,10 +287,10 @@ export function LandingPage({
                   d: "Report a conversation, block the other person, and leave. Treat links and money requests with the same caution you would anywhere on the web.",
                 },
               ].map((x) => (
-                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
+                <Box key={x.t}>
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
-                </div>
+                </Box>
               ))}
             </div>
           </Reveal>
@@ -295,7 +302,7 @@ export function LandingPage({
           <Reveal>
             <Kicker>How it works</Kicker>
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Four clear steps.</h2>
-            <ol className="mt-8 grid gap-4 sm:grid-cols-2">
+            <ol className="mt-4 grid gap-4 sm:grid-cols-2">
               {[
                 {
                   n: "01",
@@ -318,42 +325,15 @@ export function LandingPage({
                   d: "Private chat and further video are for people who already chose each other. Block, report, or leave at any time. Plans can expand limits; they do not remove safety tools.",
                 },
               ].map((s) => (
-                <li key={s.n} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
-                  <p className="text-xs tracking-[0.18em] text-mist-400">{s.n}</p>
-                  <p className="mt-2 font-heading text-lg font-semibold">{s.t}</p>
-                  <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{s.d}</p>
+                <li key={s.n}>
+                  <Box>
+                    <p className="text-xs tracking-[0.18em] text-mist-400">{s.n}</p>
+                    <p className="mt-2 font-heading text-lg font-semibold">{s.t}</p>
+                    <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{s.d}</p>
+                  </Box>
                 </li>
               ))}
             </ol>
-          </Reveal>
-        </Card>
-      </Shell>
-
-      <Shell>
-        <Card id="pricing">
-          <Reveal>
-            <Kicker>Plans</Kicker>
-            <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-              Pick a plan that matches how you use VIDLIX.
-            </h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
-              Free is enough to try. Paid plans can open more chat, private video, dating tools, live
-              features, or sponsored connections. Prices and perks are set in Admin — not frozen in this
-              page.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              {plans.map((p) => (
-                <div
-                  key={p.id}
-                  className={`py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10 ${p.highlight ? "lg:ring-1 lg:ring-violet" : ""}`}
-                >
-                  <p className="text-sm text-mist-500">{p.name}</p>
-                  <p className="mt-2 font-heading text-2xl font-semibold">
-                    {p.priceCents === 0 ? "Free" : `$${(p.priceCents / 100).toFixed(0)}`}
-                  </p>
-                </div>
-              ))}
-            </div>
           </Reveal>
         </Card>
       </Shell>
@@ -365,11 +345,13 @@ export function LandingPage({
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
               Block. Report. Leave.
             </h2>
-            <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
-              Every live surface — Random, Live, Dating, Chat — is built so you can end the interaction
-              immediately and tell us what went wrong.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <Box className="mt-4">
+              <p className="max-w-3xl text-[15px] leading-relaxed text-mist-600 dark:text-mist-300">
+                Every live surface — Random, Live, Dating, Chat — is built so you can end the interaction
+                immediately and tell us what went wrong.
+              </p>
+            </Box>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
               {[
                 {
                   t: "In the moment",
@@ -384,13 +366,13 @@ export function LandingPage({
                   d: "We will not promise every stranger is kind. We will not record random calls as a product feature. We will not put you in Dating without opt-in.",
                 },
               ].map((x) => (
-                <div key={x.t} className="py-4 lg:rounded-xl lg:border lg:border-mist-200 lg:p-5 dark:lg:border-white/10">
+                <Box key={x.t}>
                   <h3 className="font-heading text-base font-semibold">{x.t}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist-500">{x.d}</p>
-                </div>
+                </Box>
               ))}
             </div>
-            <a href="/safety" className="btn-primary mt-8">
+            <a href="/safety" className="btn-primary mt-6">
               Safety Center
             </a>
           </Reveal>
@@ -402,12 +384,14 @@ export function LandingPage({
           <Reveal>
             <Kicker>FAQ</Kicker>
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Straight answers.</h2>
-            <div className="mt-8 divide-y divide-mist-200 border-y border-mist-200 dark:divide-white/10 dark:border-white/10">
+            <div className="mt-4 grid gap-4">
               {shortFaqs.map((f) => (
-                <details key={f.id} className="py-4">
-                  <summary className="cursor-pointer font-medium">{f.question}</summary>
-                  <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mist-500">{f.answer}</p>
-                </details>
+                <Box key={f.id}>
+                  <details>
+                    <summary className="cursor-pointer font-medium">{f.question}</summary>
+                    <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mist-500">{f.answer}</p>
+                  </details>
+                </Box>
               ))}
             </div>
             <a href="/help" className="mt-6 inline-block text-sm underline underline-offset-4">
@@ -424,10 +408,12 @@ export function LandingPage({
               <Mark />
               <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Ready when you are.</h2>
             </div>
-            <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-mist-500">
-              Create an account with email, confirm you are 18+, and start with Random Video or a live
-              room. Dating stays off until you turn it on.
-            </p>
+            <Box className="mt-4">
+              <p className="max-w-xl text-[15px] leading-relaxed text-mist-500">
+                Create an account with email, confirm you are 18+, and start with Random Video or a live
+                room. Dating stays off until you turn it on.
+              </p>
+            </Box>
             <a href="/signup" className="btn-primary mt-6">
               Create account
             </a>

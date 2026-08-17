@@ -9,7 +9,6 @@ const cols = [
       ["/#live", "Live"],
       ["/#dating", "Dating"],
       ["/#chat", "Chat"],
-      ["/#pricing", "Pricing"],
     ],
   },
   {

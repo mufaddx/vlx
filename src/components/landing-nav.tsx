@@ -12,7 +12,6 @@ const links = [
   { href: "/#dating", label: "Dating" },
   { href: "/#features", label: "Features" },
   { href: "/#how", label: "How It Works" },
-  { href: "/#pricing", label: "Pricing" },
   { href: "/#safety", label: "Safety" },
   { href: "/help", label: "Help" },
 ];
