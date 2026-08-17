@@ -14,6 +14,8 @@ import {
   Check,
 } from "lucide-react";
 import type { FaqItem, SubscriptionPlan } from "@prisma/client";
+import { CoverPhoto } from "@/components/cover-photo";
+import { photos } from "@/lib/marketing-photos";
 
 function Section({
   id,
@@ -52,15 +54,15 @@ function RandomStage() {
         <span className="rounded-full bg-teal/20 px-3 py-1 text-teal">Identity hidden</span>
       </div>
       <div className="grid h-[420px] grid-rows-2 sm:h-[520px]">
-        <div className="relative bg-gradient-to-br from-violet/40 via-ink-800 to-ink-950">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,124,255,0.35),transparent_45%)]" />
-          <p className="absolute left-4 top-14 text-[11px] uppercase tracking-widest text-white/50">
+        <div className="relative">
+          <CoverPhoto src={photos.randomPeer} alt="Anonymous video match, other person" sizes="(max-width: 1024px) 100vw, 40vw" />
+          <p className="absolute left-4 top-14 text-[11px] uppercase tracking-widest text-white/80">
             Other person · 50%
           </p>
         </div>
-        <div className="relative border-t border-white/10 bg-gradient-to-tr from-teal/30 via-ink-900 to-ink-950">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(94,234,212,0.28),transparent_40%)]" />
-          <p className="absolute left-4 top-4 text-[11px] uppercase tracking-widest text-white/50">You · 50%</p>
+        <div className="relative border-t border-white/10">
+          <CoverPhoto src={photos.randomSelf} alt="Anonymous video match, you" sizes="(max-width: 1024px) 100vw, 40vw" />
+          <p className="absolute left-4 top-4 text-[11px] uppercase tracking-widest text-white/80">You · 50%</p>
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2 border-t border-white/10 bg-black/40 px-3 py-3">
@@ -81,13 +83,16 @@ function LiveStage() {
   return (
     <div className="overflow-hidden rounded-3xl border border-mist-200 bg-white shadow-glass dark:border-white/10 dark:bg-ink-800">
       <div className="grid gap-3 p-4 lg:grid-cols-[1.4fr_0.8fr]">
-        <div className="relative min-h-[280px] overflow-hidden rounded-2xl bg-gradient-to-br from-ink-900 via-violet/40 to-ink-950">
+        <div className="relative min-h-[280px] overflow-hidden rounded-2xl bg-ink-950">
+          <CoverPhoto src={photos.liveHost} alt="VIDLIX Live host" sizes="(max-width: 1024px) 100vw, 45vw" />
           <span className="absolute left-3 top-3 rounded-full bg-rose-500 px-2 py-1 text-[11px] font-semibold text-white">
-            LIVE · 1.2k
+            LIVE
           </span>
-          <div className="absolute bottom-3 left-3 right-3 grid grid-cols-5 gap-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-16 rounded-lg bg-white/10 ring-1 ring-white/20" />
+          <div className="absolute bottom-3 left-3 right-3 grid grid-cols-4 gap-2">
+            {[photos.live1, photos.live2, photos.live3, photos.live4].map((src) => (
+              <div key={src} className="relative h-16 overflow-hidden rounded-lg ring-1 ring-white/20">
+                <CoverPhoto src={src} alt="Live participant" sizes="80px" />
+              </div>
             ))}
           </div>
         </div>
@@ -113,7 +118,9 @@ function DatingStage() {
   return (
     <div className="mx-auto grid max-w-md gap-4">
       <div className="overflow-hidden rounded-3xl border border-mist-200 bg-white shadow-glass dark:border-white/10 dark:bg-ink-800">
-        <div className="h-72 bg-gradient-to-br from-violet/50 via-ink-700 to-teal/30" />
+        <div className="relative h-72">
+          <CoverPhoto src={photos.dating} alt="Optional VIDLIX Dating profile" sizes="(max-width: 1024px) 100vw, 28rem" />
+        </div>
         <div className="p-5">
           <p className="font-heading text-xl font-semibold">Alex, 27</p>
           <p className="text-sm text-mist-500">Lisbon · Looking for real conversations</p>
@@ -172,12 +179,12 @@ export function LandingPage({
 }) {
   return (
     <div id="home">
-      <section className="mx-auto grid max-w-7xl items-center gap-12 px-6 pb-8 pt-12 lg:grid-cols-2 lg:pt-16">
+      <section className="mx-auto grid max-w-7xl items-center gap-10 px-6 pb-8 pt-8 lg:grid-cols-2 lg:pt-12">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-deep dark:text-teal">
             Privacy-first social video
           </p>
-          <h1 className="mt-4 font-heading text-5xl font-semibold tracking-tight sm:text-6xl">
+          <h1 className="mt-4 font-heading text-4xl font-semibold tracking-tight sm:text-6xl">
             Meet. Connect. Discover.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-mist-500 dark:text-mist-400">
@@ -188,10 +195,10 @@ export function LandingPage({
             <Link href="/signup" className="btn-primary">
               Start Random Video
             </Link>
-            <a href="#live" className="btn-secondary">
+            <a href="/#live" className="btn-secondary">
               Explore Live
             </a>
-            <a href="#dating" className="btn-ghost">
+            <a href="/#dating" className="btn-ghost">
               Explore Dating
             </a>
           </div>
@@ -209,7 +216,14 @@ export function LandingPage({
             ))}
           </dl>
         </div>
-        <RandomStage />
+        <div className="relative min-h-[280px] overflow-hidden rounded-3xl border border-mist-200 dark:border-white/10 lg:min-h-[520px]">
+          <div className="absolute inset-0 lg:hidden">
+            <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" sizes="100vw" priority />
+          </div>
+          <div className="absolute inset-0 hidden lg:block">
+            <CoverPhoto src={photos.heroDesktop} alt="VIDLIX video conversation" sizes="50vw" priority />
+          </div>
+        </div>
       </section>
 
       <Section
@@ -352,7 +366,10 @@ export function LandingPage({
         title="Stay Connected Beyond the Call."
         copy="Continue through private chat with realtime messaging, emoji, unread counts, typing indicators, read status, video call, block, and report."
       >
-        <div className="mx-auto max-w-xl">
+        <div className="grid items-stretch gap-8 lg:grid-cols-2">
+          <div className="relative min-h-[280px] overflow-hidden rounded-3xl border border-mist-200 dark:border-white/10 lg:min-h-[360px]">
+            <CoverPhoto src={photos.chat} alt="Private conversation after a call" sizes="(max-width: 1024px) 100vw, 50vw" />
+          </div>
           <ChatStage />
         </div>
       </Section>
@@ -363,6 +380,12 @@ export function LandingPage({
         title="Choose Your VIDLIX Plan."
         copy="Plans are controlled from the Super Admin Panel — names, prices, sponsored connection slots, and entitlements are not frozen in the product."
       >
+        <div className="relative mb-8 overflow-hidden rounded-3xl">
+          <div className="relative h-36 sm:h-44">
+            <CoverPhoto src={photos.pricing} alt="VIDLIX plans" sizes="100vw" />
+            <div className="absolute inset-0 bg-ink-950/45" />
+          </div>
+        </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {plans.map((p) => (
             <div
@@ -439,9 +462,16 @@ export function LandingPage({
         title="Built to be interruptible."
         copy="Anonymous random calling, block, report, privacy controls, community guidelines, moderation, and account security."
       >
-        <Link href="/safety" className="btn-primary">
-          Visit Safety Center
-        </Link>
+        <div className="grid items-center gap-8 lg:grid-cols-2">
+          <div className="relative min-h-[240px] overflow-hidden rounded-3xl">
+            <CoverPhoto src={photos.safety} alt="Privacy and control on VIDLIX" sizes="(max-width: 1024px) 100vw, 50vw" />
+          </div>
+          <div>
+            <Link href="/safety" className="btn-primary">
+              Visit Safety Center
+            </Link>
+          </div>
+        </div>
       </Section>
 
       <Section id="faq" eyebrow="FAQ" title="Questions, answered.">
@@ -456,7 +486,11 @@ export function LandingPage({
       </Section>
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
-        <div className="rounded-[2rem] bg-ink-900 px-8 py-16 text-white dark:bg-gradient-to-br dark:from-ink-800 dark:to-ink-950">
+        <div className="relative overflow-hidden rounded-[2rem] bg-ink-900 text-white">
+          <div className="absolute inset-0 opacity-40">
+            <CoverPhoto src={photos.extra} alt="Ready to connect on VIDLIX" sizes="100vw" />
+          </div>
+          <div className="relative px-8 py-16">
           <Sparkles className="h-6 w-6 text-teal" />
           <h2 className="mt-4 font-heading text-4xl font-semibold">Ready to Connect?</h2>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -466,6 +500,7 @@ export function LandingPage({
             <Link href="/signup" className="btn bg-white/10 text-white hover:bg-white/15">
               Create Account
             </Link>
+          </div>
           </div>
         </div>
       </section>
