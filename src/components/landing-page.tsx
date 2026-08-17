@@ -125,12 +125,12 @@ export function LandingPage({
               </div>
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-950/80 via-ink-950/25 to-transparent p-4 lg:hidden">
                 <div className="flex gap-3">
-                  <Link href="/signup" className="btn-primary flex-1 text-center">
+                  <a href="/signup" className="btn-primary flex-1 text-center">
                     Sign up
-                  </Link>
-                  <Link href="/login" className="btn-secondary flex-1 text-center">
+                  </a>
+                  <a href="/login" className="btn-secondary flex-1 text-center">
                     Sign in
-                  </Link>
+                  </a>
                 </div>
               </div>
             </PhotoFrame>
@@ -171,9 +171,9 @@ export function LandingPage({
               </li>
             </ul>
             <div className="mt-8 hidden flex-wrap gap-3 lg:flex">
-              <Link href="/signup" className="btn-primary">
+              <a href="/signup" className="btn-primary">
                 Get started
-              </Link>
+              </a>
               <a href="/#how" className="btn-secondary">
                 How it works
               </a>
@@ -449,9 +449,9 @@ export function LandingPage({
                   Create an account with email, confirm you are 18+, and start with Random Video or a live room. Dating
                   stays off until you turn it on.
                 </p>
-                <Link href="/signup" className="btn-primary mt-6">
+                <a href="/signup" className="btn-primary mt-6">
                   Create account
-                </Link>
+                </a>
               </div>
             </div>
           </div>

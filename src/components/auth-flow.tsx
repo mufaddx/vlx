@@ -1,26 +1,32 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { completeSignupAction, sendOtpAction, verifyOtpAction } from "@/lib/actions/auth";
-import { Logo } from "./logo";
+
+type JsonResult = { error?: string; hint?: string; next?: string; ok?: boolean; verified?: boolean };
+
+async function postForm(url: string, fd: FormData): Promise<JsonResult> {
+  const res = await fetch(url, { method: "POST", body: fd, credentials: "same-origin" });
+  const data = (await res.json().catch(() => null)) as JsonResult | null;
+  if (!data) return { error: "Could not reach the server. Try again." };
+  return data;
+}
 
 export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
   const [step, setStep] = useState<"id" | "otp" | "profile">("id");
   const [identifier, setIdentifier] = useState("");
   const [hint, setHint] = useState<string | undefined>();
   const [error, setError] = useState<string | null>(null);
-  const [pending, start] = useTransition();
+  const [pending, setPending] = useState(false);
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <Logo />
-      <h1 className="mt-8 font-heading text-3xl font-semibold">
+      <h1 className="font-heading text-3xl font-semibold">
         {mode === "login" ? "Welcome back" : "Create your VIDLIX"}
       </h1>
-      <p className="mt-2 text-sm text-mist-500">
+      <p className="mt-2 text-sm leading-relaxed text-mist-500">
         {mode === "login"
-          ? "Email, then a one-time code. No password. No mobile OTP. Account recovery is the same email login."
+          ? "Email, then a one-time code. No password. No mobile OTP."
           : "You must be 18+. Camera is not requested during signup. We only send OTP to email."}
       </p>
 
@@ -33,21 +39,23 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
       {step === "id" ? (
         <form
           className="mt-6 space-y-4"
-          action={(fd) => {
+          onSubmit={async (e) => {
+            e.preventDefault();
             setError(null);
-            start(async () => {
-              try {
-                const res = await sendOtpAction(fd);
-                if (!res || ("error" in res && res.error)) {
-                  setError(res && "error" in res ? res.error : "Could not send the code.");
-                  return;
-                }
-                setHint("hint" in res ? res.hint : undefined);
-                setStep("otp");
-              } catch {
-                setError("Could not send the code. Try again.");
+            setPending(true);
+            try {
+              const res = await postForm("/api/auth/send-otp", new FormData(e.currentTarget));
+              if (res.error) {
+                setError(res.error);
+                return;
               }
-            });
+              setHint(res.hint);
+              setStep("otp");
+            } catch {
+              setError("Could not send the code. Try again.");
+            } finally {
+              setPending(false);
+            }
           }}
         >
           <label className="block text-sm font-medium" htmlFor="identifier">
@@ -74,17 +82,26 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
       {step === "otp" ? (
         <form
           className="mt-6 space-y-4"
-          action={(fd) => {
+          onSubmit={async (e) => {
+            e.preventDefault();
             setError(null);
-            start(async () => {
-              try {
-                const res = await verifyOtpAction(fd);
-                if (res && "error" in res && res.error) setError(res.error);
-                else if (mode === "signup") setStep("profile");
-              } catch {
-                setError("Could not verify the code. Try again.");
+            setPending(true);
+            try {
+              const res = await postForm("/api/auth/verify-otp", new FormData(e.currentTarget));
+              if (res.error) {
+                setError(res.error);
+                return;
               }
-            });
+              if (res.next) {
+                window.location.assign(res.next);
+                return;
+              }
+              if (mode === "signup") setStep("profile");
+            } catch {
+              setError("Could not verify the code. Try again.");
+            } finally {
+              setPending(false);
+            }
           }}
         >
           <input type="hidden" name="identifier" value={identifier} />
@@ -93,9 +110,7 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
             One-time code
           </label>
           <input id="code" name="code" className="input tracking-[0.4em]" required inputMode="numeric" />
-          {hint ? (
-            <p className="text-xs text-mist-500">Development code: {hint}</p>
-          ) : null}
+          {hint ? <p className="text-xs text-mist-500">Development code: {hint}</p> : null}
           <button className="btn-primary w-full" disabled={pending} type="submit">
             {pending ? "Checking…" : "Continue"}
           </button>
@@ -105,12 +120,22 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
       {step === "profile" ? (
         <form
           className="mt-6 space-y-4"
-          action={(fd) => {
+          onSubmit={async (e) => {
+            e.preventDefault();
             setError(null);
-            start(async () => {
-              const res = await completeSignupAction(fd);
-              if (res && "error" in res && res.error) setError(res.error);
-            });
+            setPending(true);
+            try {
+              const res = await postForm("/api/auth/complete-signup", new FormData(e.currentTarget));
+              if (res.error) {
+                setError(res.error);
+                return;
+              }
+              if (res.next) window.location.assign(res.next);
+            } catch {
+              setError("Could not create the account. Try again.");
+            } finally {
+              setPending(false);
+            }
           }}
         >
           <input type="hidden" name="identifier" value={identifier} />
@@ -151,12 +176,6 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
               <option value="non_binary">Non-binary</option>
               <option value="prefer_not">Prefer not to say</option>
             </select>
-          </div>
-          <div>
-            <label className="text-sm font-medium" htmlFor="photo">
-              Profile photo (optional for now)
-            </label>
-            <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="mt-1 text-sm" />
           </div>
           <label className="flex items-start gap-2 text-sm">
             <input type="checkbox" name="terms" required className="mt-1" />
@@ -209,16 +228,16 @@ export function AuthFlow({ mode }: { mode: "login" | "signup" }) {
         {mode === "login" ? (
           <>
             New here?{" "}
-            <Link href="/signup" className="font-medium text-ink-900 underline dark:text-white">
+            <a href="/signup" className="font-medium text-ink-900 underline dark:text-white">
               Sign up
-            </Link>
+            </a>
           </>
         ) : (
           <>
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-ink-900 underline dark:text-white">
+            <a href="/login" className="font-medium text-ink-900 underline dark:text-white">
               Log in
-            </Link>
+            </a>
           </>
         )}
       </p>

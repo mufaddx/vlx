@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "./logo";
 import { Menu, X } from "lucide-react";
@@ -46,15 +45,15 @@ export function LandingNav() {
           </nav>
           <div className="hidden items-center gap-2 lg:flex">
             <ThemeToggle />
-            <Link href="/login" className="btn-ghost">
+            <a href="/login" className="btn-ghost">
               Login
-            </Link>
-            <Link href="/signup" className="btn-secondary">
+            </a>
+            <a href="/signup" className="btn-secondary">
               Sign Up
-            </Link>
-            <Link href="/signup" className="btn-primary">
+            </a>
+            <a href="/signup" className="btn-primary">
               Start Connecting
-            </Link>
+            </a>
           </div>
           <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
@@ -90,12 +89,12 @@ export function LandingNav() {
               <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-mist-400">
                 Account
               </p>
-              <Link href="/login" className="btn-secondary w-full" onClick={() => setOpen(false)}>
+              <a href="/login" className="btn-secondary w-full" onClick={() => setOpen(false)}>
                 Login
-              </Link>
-              <Link href="/signup" className="btn-primary mt-3 w-full" onClick={() => setOpen(false)}>
+              </a>
+              <a href="/signup" className="btn-primary mt-3 w-full" onClick={() => setOpen(false)}>
                 Sign Up
-              </Link>
+              </a>
             </div>
           </div>
         </div>
