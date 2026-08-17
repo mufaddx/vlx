@@ -19,7 +19,7 @@ function Card({
   return (
     <section id={id} className="scroll-mt-24">
       <div
-        className={`border-y border-mist-200 bg-white px-4 py-6 dark:border-white/10 dark:bg-ink-950 lg:rounded-2xl lg:border lg:p-10 ${className}`}
+        className={`mx-3 overflow-hidden rounded-2xl border border-mist-200 bg-white px-4 py-6 dark:border-white/10 dark:bg-ink-950 lg:mx-0 lg:p-10 ${className}`}
       >
         {children}
       </div>
@@ -71,7 +71,7 @@ export function LandingPage({ faqs }: { faqs: FaqItem[] }) {
               <h1 className="mt-4 whitespace-nowrap font-heading text-[clamp(1.05rem,5.2vw,1.75rem)] font-semibold leading-none tracking-tight sm:text-3xl lg:text-5xl">
                 Meet. Connect. Discover.
               </h1>
-              <div className="-mx-4 mt-3 lg:mx-0 lg:mt-6 lg:hidden">
+              <div className="-mx-4 mt-3 lg:hidden">
                 <CoverPhoto src={photos.heroMobile} alt="VIDLIX on a phone" fit="natural" sizes="100vw" priority />
               </div>
               <div className="mt-5 hidden h-px w-16 bg-ink-900/15 dark:bg-white/15 lg:block" />
