@@ -29,15 +29,15 @@ export function LandingNav() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-mist-200/80 bg-white/95 backdrop-blur-md dark:border-white/10 dark:bg-ink-950/95">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between rounded-full border border-mist-200 bg-white px-3 shadow-sm dark:border-white/10 dark:bg-ink-950 sm:h-16 sm:px-5">
           <Logo />
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
             {links.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
-                className="rounded-lg px-2.5 py-2 text-sm font-medium text-mist-500 hover:bg-mist-100 hover:text-ink-900 dark:text-mist-400 dark:hover:bg-white/10 dark:hover:text-white"
+                className="rounded-full px-2.5 py-1.5 text-sm font-medium text-mist-500 hover:bg-mist-100 hover:text-ink-900 dark:text-mist-400 dark:hover:bg-white/10 dark:hover:text-white"
               >
                 {l.label}
               </a>
@@ -59,7 +59,7 @@ export function LandingNav() {
             <ThemeToggle />
             <button
               type="button"
-              className="grid h-11 w-11 cursor-pointer place-items-center rounded-xl hover:bg-mist-100 dark:hover:bg-white/10"
+              className="grid h-11 w-11 cursor-pointer place-items-center rounded-full hover:bg-mist-100 dark:hover:bg-white/10"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
@@ -71,7 +71,7 @@ export function LandingNav() {
       </header>
 
       {open ? (
-        <div className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col bg-white lg:hidden dark:bg-ink-950">
+        <div className="fixed inset-x-0 bottom-0 top-[4.5rem] z-40 flex flex-col bg-white lg:hidden dark:bg-ink-950">
           <nav className="flex-1 overflow-y-auto px-4 py-4" aria-label="Mobile">
             {links.map((l) => (
               <a
@@ -85,17 +85,12 @@ export function LandingNav() {
             ))}
           </nav>
           <div className="border-t border-mist-200 p-4 dark:border-white/10">
-            <div className="rounded-2xl border border-mist-200 bg-mist-50 p-4 dark:border-white/10 dark:bg-ink-900">
-              <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-mist-400">
-                Account
-              </p>
-              <a href="/login" className="btn-secondary w-full" onClick={() => setOpen(false)}>
-                Login
-              </a>
-              <a href="/signup" className="btn-primary mt-3 w-full" onClick={() => setOpen(false)}>
-                Sign Up
-              </a>
-            </div>
+            <a href="/login" className="btn-secondary w-full" onClick={() => setOpen(false)}>
+              Login
+            </a>
+            <a href="/signup" className="btn-primary mt-3 w-full" onClick={() => setOpen(false)}>
+              Sign Up
+            </a>
           </div>
         </div>
       ) : null}

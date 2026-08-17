@@ -1,5 +1,10 @@
-import { AuthShell } from "@/components/auth-shell";
+import { LandingNav } from "@/components/landing-nav";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return <AuthShell>{children}</AuthShell>;
+  return (
+    <div className="min-h-screen">
+      <LandingNav />
+      <div className="pt-20">{children}</div>
+    </div>
+  );
 }

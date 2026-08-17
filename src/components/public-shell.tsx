@@ -5,7 +5,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
       <LandingNav />
-      <div className="pt-16">{children}</div>
+      <div className="pt-20">{children}</div>
       <SiteFooter />
     </div>
   );
