@@ -9,7 +9,6 @@ import { providers } from "@/lib/providers";
 import { connectionPair } from "@/lib/ids";
 import { isBlockedEitherWay } from "@/lib/social";
 import { notify } from "@/lib/notify";
-import { ageFromDob } from "@/lib/crypto";
 
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
 
@@ -105,8 +104,4 @@ export async function datingSwipeAction(targetId: string, action: "like" | "pass
   }
   revalidatePath("/dating");
   return { ok: true as const };
-}
-
-export function datingAge(dob: Date) {
-  return ageFromDob(dob);
 }

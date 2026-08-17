@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { saveDatingProfileAction, datingSwipeAction, datingAge } from "@/lib/actions/dating";
+import { saveDatingProfileAction, datingSwipeAction } from "@/lib/actions/dating";
 import { isBlockedEitherWay } from "@/lib/social";
+import { ageFromDob } from "@/lib/crypto";
 
 export const metadata = { title: "Dating", robots: { index: false } };
 
@@ -62,7 +63,7 @@ export default async function Page({
   for (const p of candidates) {
     if (swipedIds.has(p.userId)) continue;
     if (await isBlockedEitherWay(me.id, p.userId)) continue;
-    const age = datingAge(p.user.dateOfBirth);
+    const age = ageFromDob(p.user.dateOfBirth);
     const pref = myDating.preferences;
     if (pref && (age < pref.minAge || age > pref.maxAge)) continue;
     discover.push({ p, age });
